@@ -22,7 +22,8 @@ export default function Auth() {
     const val = e.target.value;
     setEmail(val);
     if (!isLogin && !username) {
-      setUsername(val.split('@')[0]);
+      const baseUsername = val.split('@')[0].replace(/\d+$/, '');
+      setUsername(baseUsername || 'user_' + Math.random().toString(36).slice(2,7));
     }
   };
 
@@ -66,7 +67,7 @@ export default function Auth() {
           password,
           options: {
             data: {
-              username: username || email.split('@')[0]
+              username: username || email.split('@')[0].replace(/\d+$/, '') || 'user_' + Math.random().toString(36).slice(2,7)
             }
           }
         });
@@ -97,6 +98,23 @@ export default function Auth() {
 
   return (
     <div className="min-h-screen relative flex items-center justify-center p-4">
+      {/* 
+        -- Run this in Supabase SQL editor to fix trigger (already done in Auth API):
+        CREATE OR REPLACE FUNCTION handle_new_user()
+        RETURNS TRIGGER AS $$
+        BEGIN
+          INSERT INTO public.profiles (id, username, display_name, avatar_url)
+          VALUES (
+            new.id,
+            REGEXP_REPLACE(SPLIT_PART(new.email, '@', 1), '\\d+$', ''),
+            REGEXP_REPLACE(SPLIT_PART(new.email, '@', 1), '\\d+$', ''),
+            new.raw_user_meta_data->>'avatar_url'
+          );
+          RETURN new;
+        END;
+        $$ LANGUAGE plpgsql SECURITY DEFINER;
+      */}
+
       {/* Background with CSS panel grid pattern */}
       <div 
         className="absolute inset-0 z-0 bg-primary opacity-40 pointer-events-none"

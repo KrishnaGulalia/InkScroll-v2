@@ -257,3 +257,31 @@ export async function fetchHomeData() {
   const data = await anilistFetch(HOME_SECTIONS_QUERY, {});
   return data;
 }
+
+const BATCH_GENRES_QUERY = `
+query ($id_in: [Int]) {
+  Page(page: 1, perPage: 50) {
+    media(type: MANGA, id_in: $id_in) {
+      id
+      genres
+    }
+  }
+}
+`;
+
+export async function fetchMediaGenres(ids) {
+  if (!ids || ids.length === 0) return {};
+  try {
+    const data = await throttledAnilistFetch(BATCH_GENRES_QUERY, { id_in: ids.map(id => parseInt(id)) });
+    const genresMap = {};
+    if (data?.Page?.media) {
+      data.Page.media.forEach(m => {
+        genresMap[m.id] = m.genres;
+      });
+    }
+    return genresMap;
+  } catch (err) {
+    console.error("Error fetching batch genres:", err);
+    return {};
+  }
+}
