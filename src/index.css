@@ -1,0 +1,96 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html {
+    scroll-behavior: smooth;
+    -webkit-text-size-adjust: 100%;
+  }
+  body {
+    @apply bg-primary text-txt-primary font-body antialiased;
+    overflow-x: hidden;
+  }
+  /* Safe area support for notched devices */
+  body {
+    padding: env(safe-area-inset-top, 0) env(safe-area-inset-right, 0) 0 env(safe-area-inset-left, 0);
+  }
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: #07080f; }
+::-webkit-scrollbar-thumb { background: #1e2240; border-radius: 4px; }
+::-webkit-scrollbar-thumb:hover { background: #2d3460; }
+
+/* Hide scrollbar on scroll rows */
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+
+/* Frosted glass */
+.frosted {
+  background: rgba(13, 15, 26, 0.72);
+  backdrop-filter: blur(20px) saturate(1.6);
+  -webkit-backdrop-filter: blur(20px) saturate(1.6);
+}
+
+/* Crimson glow on hover */
+.glow-crimson {
+  box-shadow: 0 0 0 1px rgba(230, 57, 70, 0),
+              0 8px 30px rgba(230, 57, 70, 0);
+  transition: box-shadow 0.35s ease, transform 0.35s ease;
+}
+.glow-crimson:hover {
+  box-shadow: 0 0 0 1px rgba(230, 57, 70, 0.35),
+              0 8px 30px rgba(230, 57, 70, 0.15);
+}
+
+/* Shimmer gradient for loading */
+.shimmer-bg {
+  background: linear-gradient(
+    90deg,
+    #111420 25%,
+    #1a1e33 50%,
+    #111420 75%
+  );
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+/* Tab underline */
+.tab-active {
+  position: relative;
+}
+.tab-active::after {
+  content: '';
+  position: absolute;
+  bottom: -2px;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e63946;
+  border-radius: 1px;
+}
+
+/* Prevent horizontal overflow on all pages */
+#root {
+  overflow-x: hidden;
+  width: 100%;
+}
+
+/* Touch scroll momentum for iOS */
+.overflow-x-auto {
+  -webkit-overflow-scrolling: touch;
+}
+
+/* Ensure images don't cause overflow */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* Focus visible for keyboard accessibility */
+:focus-visible {
+  outline: 2px solid #e63946;
+  outline-offset: 2px;
+}
