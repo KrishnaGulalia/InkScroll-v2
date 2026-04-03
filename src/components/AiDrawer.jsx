@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { askGemini } from '../lib/gemini';
+import { getAIRecommendations } from '../lib/ai';
 import { fetchMediaList } from '../lib/anilist';
 
 const SUGGESTIONS = [
@@ -102,7 +102,7 @@ export default function AiDrawer() {
     setPhase('thinking');
 
     try {
-      const titles = await askGemini(prompt);
+      const titles = await getAIRecommendations(prompt);
       setPhase('searching');
 
       const searches = titles.map(async (title) => {
