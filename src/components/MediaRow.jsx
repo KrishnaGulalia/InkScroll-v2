@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react';
 import MediaCard from './MediaCard';
 
-export default function MediaRow({ title, emoji, media = [] }) {
+export default function MediaRow({ title, media = [] }) {
   const scrollRef = useRef(null);
   const [showLeft, setShowLeft] = useState(false);
   const [showRight, setShowRight] = useState(true);
@@ -29,15 +29,14 @@ export default function MediaRow({ title, emoji, media = [] }) {
   return (
     <section className="relative">
       {/* Section header */}
-      <div className="flex items-center justify-between mb-3 sm:mb-5">
-        <h2 className="flex items-center gap-1.5 sm:gap-2 text-base sm:text-lg md:text-xl font-semibold text-txt-primary">
-          {emoji && <span className="text-lg sm:text-xl">{emoji}</span>}
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <h2 className="font-display text-[22px] font-bold text-txt-primary border-l-[3px] border-crimson pl-3 leading-tight tracking-wide">
           {title}
         </h2>
-        <button className="text-[11px] sm:text-xs text-txt-secondary hover:text-crimson transition-colors font-medium flex items-center gap-1 group min-h-[44px] px-2">
+        <button className="text-[13px] text-crimson hover:underline underline-offset-4 transition-all font-body font-medium flex items-center gap-1 group min-h-[44px] px-2">
           View All
-          <svg className="w-3 sm:w-3.5 h-3 sm:h-3.5 transition-transform group-hover:translate-x-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <svg className="w-3.5 h-3.5 transition-transform group-hover:translate-x-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M9 5l7 7-7 7" />
           </svg>
         </button>
       </div>

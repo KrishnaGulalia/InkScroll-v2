@@ -5,22 +5,22 @@ import MediaGrid from '../components/MediaGrid';
 import { GridSkeleton, Spinner } from '../components/Loader';
 
 const GENRE_META = {
-  Action: { color: '#e63946', emoji: '⚔️', description: 'Intense battles, epic fights, and adrenaline-pumping stories.' },
-  Romance: { color: '#ec4899', emoji: '💕', description: 'Love stories, relationships, and heartfelt connections.' },
-  Fantasy: { color: '#8b5cf6', emoji: '🧙', description: 'Magical worlds, mythical creatures, and extraordinary powers.' },
-  Horror: { color: '#374151', emoji: '👻', description: 'Terrifying tales, psychological dread, and supernatural frights.' },
-  Comedy: { color: '#eab308', emoji: '😂', description: 'Hilarious moments, witty humor, and lighthearted fun.' },
-  Drama: { color: '#3b82f6', emoji: '🎭', description: 'Emotional depth, character development, and compelling narratives.' },
-  Adventure: { color: '#22c55e', emoji: '🗺️', description: 'Epic journeys, exploration, and thrilling quests.' },
-  Mystery: { color: '#6366f1', emoji: '🔍', description: 'Puzzling cases, suspenseful twists, and mind-bending clues.' },
-  'Sci-Fi': { color: '#06b6d4', emoji: '🚀', description: 'Futuristic worlds, advanced technology, and space exploration.' },
-  'Slice of Life': { color: '#f97316', emoji: '☀️', description: 'Everyday moments, relatable characters, and heartwarming stories.' },
-  Sports: { color: '#14b8a6', emoji: '⚽', description: 'Competitive spirit, athletic prowess, and team dynamics.' },
-  Supernatural: { color: '#a855f7', emoji: '👁️', description: 'Beyond the natural — spirits, powers, and otherworldly phenomena.' },
-  Psychological: { color: '#6d28d9', emoji: '🧠', description: 'Mind games, complex characters, and psychological tension.' },
-  Historical: { color: '#92400e', emoji: '🏛️', description: 'Stories set across history, from ancient to modern eras.' },
-  Mecha: { color: '#64748b', emoji: '🤖', description: 'Giant robots, futuristic machines, and mechanical warfare.' },
-  Music: { color: '#f472b6', emoji: '🎵', description: 'Musical journeys, bands, and the power of melody.' },
+  Action: { color: '#e63946', description: 'Intense battles, epic fights, and adrenaline-pumping stories.' },
+  Romance: { color: '#ec4899', description: 'Love stories, relationships, and heartfelt connections.' },
+  Fantasy: { color: '#8b5cf6', description: 'Magical worlds, mythical creatures, and extraordinary powers.' },
+  Horror: { color: '#374151', description: 'Terrifying tales, psychological dread, and supernatural frights.' },
+  Comedy: { color: '#eab308', description: 'Hilarious moments, witty humor, and lighthearted fun.' },
+  Drama: { color: '#3b82f6', description: 'Emotional depth, character development, and compelling narratives.' },
+  Adventure: { color: '#22c55e', description: 'Epic journeys, exploration, and thrilling quests.' },
+  Mystery: { color: '#6366f1', description: 'Puzzling cases, suspenseful twists, and mind-bending clues.' },
+  'Sci-Fi': { color: '#06b6d4', description: 'Futuristic worlds, advanced technology, and space exploration.' },
+  'Slice of Life': { color: '#f97316', description: 'Everyday moments, relatable characters, and heartwarming stories.' },
+  Sports: { color: '#14b8a6', description: 'Competitive spirit, athletic prowess, and team dynamics.' },
+  Supernatural: { color: '#a855f7', description: 'Beyond the natural — spirits, powers, and otherworldly phenomena.' },
+  Psychological: { color: '#6d28d9', description: 'Mind games, complex characters, and psychological tension.' },
+  Historical: { color: '#92400e', description: 'Stories set across history, from ancient to modern eras.' },
+  Mecha: { color: '#64748b', description: 'Giant robots, futuristic machines, and mechanical warfare.' },
+  Music: { color: '#f472b6', description: 'Musical journeys, bands, and the power of melody.' },
 };
 
 const SORTS = [
@@ -33,7 +33,7 @@ const SORTS = [
 export default function Genre() {
   const { genreName } = useParams();
   const genre = decodeURIComponent(genreName);
-  const meta = GENRE_META[genre] || { color: '#6b7494', emoji: '📚', description: `Explore ${genre} manga, manhwa, and manhua.` };
+  const meta = GENRE_META[genre] || { color: '#6b7494', description: `Explore ${genre} manga, manhwa, and manhua.` };
 
   const [media, setMedia] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -104,7 +104,6 @@ export default function Genre() {
           </Link>
 
           <div className="flex items-center gap-3 sm:gap-4 mb-2 sm:mb-3">
-            <span className="text-3xl sm:text-4xl">{meta.emoji}</span>
             <h1
               className="font-display text-3xl sm:text-4xl md:text-5xl font-bold italic"
               style={{ color: meta.color }}

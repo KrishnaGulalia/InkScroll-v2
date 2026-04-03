@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom';
 
-const COUNTRY_FLAG = { JP: '🇯🇵', KR: '🇰🇷', CN: '🇨🇳', TW: '🇹🇼' };
+// Clean text tags instead of emojis
+const COUNTRY_LABEL = { JP: 'JP', KR: 'KR', CN: 'CN', TW: 'TW' };
 
 export default function MediaCard({ media, index = 0, size = 'default' }) {
   const title = media.title?.english || media.title?.romaji || '';
@@ -35,9 +36,9 @@ export default function MediaCard({ media, index = 0, size = 'default' }) {
           </div>
         )}
 
-        {/* Country flag badge — top left */}
-        <div className="absolute top-1.5 sm:top-2.5 left-1.5 sm:left-2.5 bg-primary/70 backdrop-blur-sm text-[10px] sm:text-[11px] font-bold px-1.5 sm:px-2 py-0.5 rounded-full border border-white/10">
-          {COUNTRY_FLAG[media.countryOfOrigin] || media.countryOfOrigin}
+        {/* Country text badge — top left */}
+        <div className="absolute top-1.5 sm:top-2.5 left-1.5 sm:left-2.5 bg-primary/70 backdrop-blur-sm text-[9px] sm:text-[10px] tracking-wider font-bold px-1.5 sm:px-2 py-0.5 rounded-full border border-white/10 font-body">
+          {COUNTRY_LABEL[media.countryOfOrigin] || media.countryOfOrigin}
         </div>
 
         {/* Hover overlay — View button (desktop only) */}

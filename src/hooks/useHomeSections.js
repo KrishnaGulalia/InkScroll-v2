@@ -2,14 +2,14 @@ import { useState, useEffect, useRef } from 'react';
 import { fetchHomeData } from '../lib/anilist';
 
 const SECTION_TEMPLATES = [
-  { key: 'trending', title: 'Trending This Week', emoji: '🔥' },
-  { key: 'hotManhwa', title: 'Hot Manhwa', emoji: '🇰🇷' },
-  { key: 'popularManga', title: 'Popular Manga', emoji: '🇯🇵' },
-  { key: 'manhuaPicks', title: 'Manhua Picks', emoji: '🇨🇳' },
-  { key: 'topRated', title: 'Top Rated All Time', emoji: '⭐' },
-  { key: 'newReleases', title: 'New Releases', emoji: '🆕' },
-  { key: 'completed', title: 'Completed Series', emoji: '✅' },
-  { key: 'hiddenGems', title: 'Hidden Gems', emoji: '💎' },
+  { key: 'trending', title: 'Trending This Week' },
+  { key: 'hotManhwa', title: 'Hot Manhwa' },
+  { key: 'popularManga', title: 'Popular Manga' },
+  { key: 'manhuaPicks', title: 'Manhua Picks' },
+  { key: 'topRated', title: 'Top Rated All Time' },
+  { key: 'newReleases', title: 'New Releases' },
+  { key: 'completed', title: 'Completed Series' },
+  { key: 'hiddenGems', title: 'Hidden Gems' },
 ];
 
 export function useHomeSections() {

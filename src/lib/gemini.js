@@ -1,4 +1,4 @@
-const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent`;
+const GEMINI_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-pro:generateContent`;
 
 const SYSTEM_PROMPT = `You are an expert manga/manhwa/manhua recommendation assistant for InkScroll. When the user describes what they want, respond with ONLY a valid JSON array of 5 search terms or titles that match their request. Format: ["title1", "title2", "title3", "title4", "title5"]
 No explanation, no markdown, just the JSON array.`;
@@ -24,7 +24,7 @@ export async function askGemini(userPrompt) {
       ],
       generationConfig: {
         temperature: 0.7,
-        maxOutputTokens: 256,
+        maxOutputTokens: 1000,
       },
     }),
   });
@@ -35,7 +35,10 @@ export async function askGemini(userPrompt) {
   }
 
   const json = await res.json();
-  const text = json.candidates?.[0]?.content?.parts?.[0]?.text || '';
+  const text = json.candidates?.[0]?.content?.parts
+    ?.filter(part => part.text)
+    ?.map(part => part.text)
+    ?.join('') || '';
 
   // Extract JSON array from response (handle possible markdown wrapping)
   const match = text.match(/\[[\s\S]*?\]/);

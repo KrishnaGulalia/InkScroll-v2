@@ -1,51 +1,74 @@
 import { useState, useEffect, useRef } from 'react';
-import { useLocation, Link } from 'react-router-dom';
+import { useLocation, Link, useSearchParams } from 'react-router-dom';
 import { useMediaList } from '../hooks/useAniList';
 import { useHomeSections } from '../hooks/useHomeSections';
 import Hero from '../components/Hero';
-import Filters from '../components/Filters';
+import FilterBar from '../components/FilterBar';
 import CategoryPills from '../components/CategoryPills';
 import MediaGrid from '../components/MediaGrid';
 import MediaRow from '../components/MediaRow';
 import { GridSkeleton, HomeSkeleton, Spinner } from '../components/Loader';
+import { ArrowLeftIcon } from '@heroicons/react/24/outline';
 
 // Persist scroll position across navigations
 const scrollStore = { y: 0, path: '/' };
 
 const GENRE_CARDS = [
-  { name: 'Action', color: '#e63946', emoji: '⚔️' },
-  { name: 'Romance', color: '#ec4899', emoji: '💕' },
-  { name: 'Fantasy', color: '#8b5cf6', emoji: '🧙' },
-  { name: 'Horror', color: '#374151', emoji: '👻' },
-  { name: 'Comedy', color: '#eab308', emoji: '😂' },
-  { name: 'Drama', color: '#3b82f6', emoji: '🎭' },
-  { name: 'Adventure', color: '#22c55e', emoji: '🗺️' },
-  { name: 'Mystery', color: '#6366f1', emoji: '🔍' },
-  { name: 'Sci-Fi', color: '#06b6d4', emoji: '🚀' },
-  { name: 'Slice of Life', color: '#f97316', emoji: '☀️' },
-  { name: 'Sports', color: '#14b8a6', emoji: '⚽' },
-  { name: 'Supernatural', color: '#a855f7', emoji: '👁️' },
-  { name: 'Psychological', color: '#6d28d9', emoji: '🧠' },
-  { name: 'Historical', color: '#92400e', emoji: '🏛️' },
-  { name: 'Mecha', color: '#64748b', emoji: '🤖' },
-  { name: 'Music', color: '#f472b6', emoji: '🎵' },
+  { name: 'Action', color: '#e63946' },
+  { name: 'Romance', color: '#ec4899' },
+  { name: 'Fantasy', color: '#8b5cf6' },
+  { name: 'Horror', color: '#374151' },
+  { name: 'Comedy', color: '#eab308' },
+  { name: 'Drama', color: '#3b82f6' },
+  { name: 'Adventure', color: '#22c55e' },
+  { name: 'Mystery', color: '#6366f1' },
+  { name: 'Sci-Fi', color: '#06b6d4' },
+  { name: 'Slice of Life', color: '#f97316' },
+  { name: 'Sports', color: '#14b8a6' },
+  { name: 'Supernatural', color: '#a855f7' },
+  { name: 'Psychological', color: '#6d28d9' },
+  { name: 'Historical', color: '#92400e' },
+  { name: 'Mecha', color: '#64748b' },
+  { name: 'Music', color: '#f472b6' },
 ];
 
 export default function Home({ searchQuery }) {
-  const [activeCategory, setActiveCategory] = useState(null);
-  
-  const isSearching = !!searchQuery;
-  const isCategoryActive = !!activeCategory;
-  const showSections = !isSearching && !isCategoryActive;
-  
-  const { media, loading, error, pageInfo, filters, updateFilters, loadMore } = useMediaList({ skip: showSections });
-  const { sections, heroItems, loading: sectionsLoading } = useHomeSections();
+  const [searchParams, setSearchParams] = useSearchParams();
   const location = useLocation();
   const scrollRestored = useRef(false);
 
+  const hasUrlFilters = Array.from(searchParams.keys()).length > 0;
+  const isSearching = !!searchQuery;
+  const showSections = !isSearching && !hasUrlFilters;
+  
+  const { media, loading, error, pageInfo, filters, updateFilters, loadMore } = useMediaList({ skip: showSections });
+  const { sections, heroItems, loading: sectionsLoading } = useHomeSections();
+
+  // Sync URL params to useMediaList internal filters
   useEffect(() => {
-    updateFilters({ search: searchQuery || '' });
-  }, [searchQuery, updateFilters]);
+    updateFilters({
+      search: searchQuery || '',
+      country: searchParams.get('country') || null,
+      genre: searchParams.get('genre') || null,
+      sort: searchParams.get('sort') ? [searchParams.get('sort')] : null,
+      status: searchParams.get('status') || null,
+      format: searchParams.get('format') || null,
+    });
+  }, [searchQuery, searchParams, updateFilters]);
+
+  const handleFilterChange = (key, value) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (value) {
+      newParams.set(key, typeof value === 'object' ? value[0] : value);
+    } else {
+      newParams.delete(key);
+    }
+    setSearchParams(newParams);
+  };
+
+  const handleClearFilters = () => {
+    setSearchParams(new URLSearchParams());
+  };
 
   // Save scroll position on scroll
   useEffect(() => {
@@ -72,21 +95,6 @@ export default function Home({ searchQuery }) {
     scrollRestored.current = false;
   }, [filters.search, filters.genre, filters.country, filters.sort, filters.status]);
 
-  // Handle category selection
-  const handleCategoryChange = (category) => {
-    setActiveCategory(category);
-    if (!category) {
-      updateFilters({ sort: 'trending', country: null, status: null });
-    } else {
-      updateFilters({
-        sort: category.sort,
-        country: category.country,
-        status: category.status,
-      });
-    }
-  };
-
-  const isFiltering = !!filters.genre || isCategoryActive;
   const isFirstLoad = loading && media.length === 0;
   const isLoadingMore = loading && media.length > 0;
 
@@ -96,37 +104,106 @@ export default function Home({ searchQuery }) {
       {showSections && heroItems.length > 0 && <Hero items={heroItems} />}
 
       {/* Content area */}
-      <div className={`max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 ${showSections && heroItems.length > 0 ? 'pt-3 sm:pt-4' : 'pt-4 sm:pt-6'} pb-16 sm:pb-20`}>
+      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 relative z-10 pb-16 sm:pb-24 flex flex-col gap-8 sm:gap-10">
 
-        {/* Category pills */}
-        <div className="mb-4 sm:mb-6">
-          <CategoryPills
-            activeCategory={activeCategory}
-            onCategoryChange={handleCategoryChange}
+        {/* Category Pills (Visible everywhere on Home) */}
+        <section className="pt-2 sm:pt-4">
+          <CategoryPills 
+            activeCategory={null} 
+            onCategoryChange={(cat) => {
+              if (!cat) handleClearFilters();
+              else {
+                const newParams = new URLSearchParams();
+                if (cat.sort) newParams.set('sort', cat.sort);
+                if (cat.country) newParams.set('country', cat.country);
+                if (cat.status) newParams.set('status', cat.status);
+                setSearchParams(newParams);
+              }
+            }} 
           />
-        </div>
+        </section>
+
+        {/* Home Sections (Default view) */}
+        {showSections && (
+          <>
+            {sectionsLoading ? (
+              <HomeSkeleton />
+            ) : (
+              <div className="space-y-10 sm:space-y-14">
+                {sections.map((section) => (
+                  <MediaRow
+                    key={section.key}
+                    title={section.title}
+                    media={section.media}
+                  />
+                ))}
+
+                {/* Browse Genres — grid section */}
+                <section>
+                  <div className="flex items-center justify-between mb-4 sm:mb-6">
+                    <h2 className="font-display text-[22px] font-bold text-txt-primary border-l-[3px] border-crimson pl-3 leading-tight tracking-wide">
+                      Browse Genres
+                    </h2>
+                  </div>
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 sm:gap-3">
+                    {GENRE_CARDS.map((genre) => (
+                      <Link
+                        to={`/?genre=${encodeURIComponent(genre.name)}`}
+                        key={genre.name}
+                        className="group relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] flex items-end p-2.5 sm:p-3 transition-all duration-300 hover:scale-105 hover:shadow-lg"
+                        style={{
+                          background: `linear-gradient(135deg, ${genre.color}22 0%, ${genre.color}44 100%)`,
+                          border: `1px solid ${genre.color}30`,
+                        }}
+                      >
+                        {/* Text watermark background */}
+                        <span
+                          className="absolute -top-2 -right-1 text-5xl opacity-10 font-display font-bold group-hover:scale-110 transition-transform duration-300"
+                          style={{ color: genre.color }}
+                        >
+                          {genre.name.charAt(0)}
+                        </span>
+                        {/* Genre name */}
+                        <span
+                          className="relative z-10 text-[11px] sm:text-xs font-semibold leading-tight font-body"
+                          style={{ color: genre.color }}
+                        >
+                          {genre.name}
+                        </span>
+                      </Link>
+                    ))}
+                  </div>
+                </section>
+              </div>
+            )}
+          </>
+        )}
 
         {/* Search results or category results */}
-        {(isSearching || isFiltering) && (
-          <>
-            <div className="flex flex-col sm:flex-row sm:items-end sm:justify-between gap-2 sm:gap-4 mb-3 sm:mb-4">
-              <div>
-                <h1 className="font-display text-xl sm:text-2xl md:text-3xl font-bold text-txt-primary italic">
-                  {isSearching
-                    ? `Results for "${filters.search}"`
-                    : activeCategory
-                      ? activeCategory.label
-                      : 'Discover'}
-                </h1>
-                {!isSearching && !activeCategory && (
-                  <p className="text-txt-muted text-xs sm:text-sm mt-1 font-body">Explore trending manga, manhwa & manhua</p>
-                )}
-              </div>
+        {/* Browsing / Grid View */}
+        {!showSections && (
+          <div className="animate-fadeIn mt-4">
+            {/* Back button and View Header */}
+            <div className="flex items-center gap-3 mb-6">
+              <button
+                onClick={handleClearFilters}
+                className="flex items-center justify-center p-2 rounded-full bg-elevated/80 border border-line hover:border-crimson hover:text-crimson transition-all"
+                title="Back to For You"
+              >
+                <ArrowLeftIcon className="w-5 h-5" />
+              </button>
+              <h1 className="font-display text-2xl sm:text-3xl font-bold text-txt-primary tracking-wide">
+                {isSearching ? `Search: "${searchQuery}"` : 'Discover Catalog'}
+              </h1>
             </div>
 
-            {isSearching && (
-              <Filters filters={filters} onFilterChange={updateFilters} />
-            )}
+            {/* Comprehensive Filter Bar */}
+            <FilterBar 
+              filters={filters} 
+              onFilterChange={handleFilterChange} 
+              onClear={handleClearFilters} 
+              resultsCount={pageInfo?.total}
+            />
 
             {error && (
               <div className="mt-8 sm:mt-10 text-center py-12 sm:py-16">
@@ -155,7 +232,7 @@ export default function Home({ searchQuery }) {
             </div>
 
             {isLoadingMore && <Spinner />}
-            {!loading && pageInfo.hasNextPage && media.length > 0 && (
+            {!loading && pageInfo?.hasNextPage && media.length > 0 && (
               <div className="flex justify-center mt-8 sm:mt-10">
                 <button
                   onClick={loadMore}
@@ -168,68 +245,10 @@ export default function Home({ searchQuery }) {
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
                     </svg>
                   </span>
-                  <span className="absolute inset-0 bg-gradient-to-r from-crimson/0 via-crimson/5 to-crimson/0 opacity-0 group-hover:opacity-100 transition-opacity" />
                 </button>
               </div>
             )}
-          </>
-        )}
-
-        {/* Sections view — when not searching/filtering */}
-        {showSections && (
-          <>
-            {sectionsLoading ? (
-              <HomeSkeleton />
-            ) : (
-              <div className="space-y-10 sm:space-y-14">
-                {sections.map((section) => (
-                  <MediaRow
-                    key={section.key}
-                    title={section.title}
-                    emoji={section.emoji}
-                    media={section.media}
-                  />
-                ))}
-
-                {/* Browse Genres — grid section */}
-                <section>
-                  <div className="flex items-center justify-between mb-4 sm:mb-6">
-                    <h2 className="flex items-center gap-1.5 sm:gap-2 text-base sm:text-lg md:text-xl font-semibold text-txt-primary font-body">
-                      <span className="text-lg sm:text-xl">🎨</span>
-                      Browse Genres
-                    </h2>
-                  </div>
-                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8 gap-2 sm:gap-3">
-                    {GENRE_CARDS.map((genre) => (
-                      <Link
-                        to={`/genre/${encodeURIComponent(genre.name)}`}
-                        key={genre.name}
-                        className="group relative overflow-hidden rounded-xl sm:rounded-2xl aspect-[4/3] flex items-end p-2.5 sm:p-3 transition-all duration-300 hover:scale-105 hover:shadow-lg"
-                        style={{
-                          background: `linear-gradient(135deg, ${genre.color}22 0%, ${genre.color}44 100%)`,
-                          border: `1px solid ${genre.color}30`,
-                        }}
-                      >
-                        {/* Emoji background */}
-                        <span
-                          className="absolute top-1 right-1 sm:top-2 sm:right-2 text-2xl sm:text-3xl opacity-30 group-hover:opacity-50 transition-opacity group-hover:scale-125 duration-300"
-                        >
-                          {genre.emoji}
-                        </span>
-                        {/* Genre name */}
-                        <span
-                          className="relative z-10 text-[11px] sm:text-xs font-semibold leading-tight font-body"
-                          style={{ color: genre.color }}
-                        >
-                          {genre.name}
-                        </span>
-                      </Link>
-                    ))}
-                  </div>
-                </section>
-              </div>
-            )}
-          </>
+          </div>
         )}
       </div>
     </div>

@@ -56,7 +56,7 @@ export function useMediaList(options = {}) {
 
     const variables = {
       page: debouncedFilters.page,
-      sort: SORT_MAP[debouncedFilters.sort] || ['TRENDING_DESC'],
+      sort: Array.isArray(debouncedFilters.sort) ? debouncedFilters.sort : (SORT_MAP[debouncedFilters.sort] || ['TRENDING_DESC']),
     };
     if (debouncedFilters.genre) variables.genre = debouncedFilters.genre;
     if (debouncedFilters.country) variables.country = debouncedFilters.country;

@@ -17,7 +17,7 @@ const MEDIA_FRAGMENT = `
 const MEDIA_LIST_QUERY = `
 query ($page: Int, $perPage: Int, $sort: [MediaSort], $genre: String, $country: CountryCode, $search: String, $status: MediaStatus, $averageScore_greater: Int, $popularity_lesser: Int) {
   Page(page: $page, perPage: $perPage) {
-    pageInfo { hasNextPage currentPage }
+    pageInfo { total hasNextPage currentPage }
     media(
       type: MANGA
       sort: $sort

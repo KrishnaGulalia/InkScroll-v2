@@ -1,7 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 
-export default function Navbar({ searchQuery, onSearchChange }) {
+import { Bars3Icon } from '@heroicons/react/24/outline';
+
+export default function Navbar({ searchQuery, onSearchChange, onMenuClick }) {
   const [localQuery, setLocalQuery] = useState(searchQuery || '');
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
@@ -71,18 +73,27 @@ export default function Navbar({ searchQuery, onSearchChange }) {
         }}
       >
         <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-3 sm:gap-4">
-          {/* Logo */}
-          <Link
-            to="/"
-            onClick={() => { onSearchChange(''); setMobileSearchOpen(false); }}
-            className="flex items-center gap-2 shrink-0 group min-h-[44px]"
-          >
-            <img src="/logo.png" alt="InkScroll" className="h-8 sm:h-9 w-auto" />
-            <span className="hidden sm:inline font-logo text-lg sm:text-xl font-bold tracking-[0.15em] uppercase">
-              <span className="text-white group-hover:text-white/90 transition-colors">Ink</span>
-              <span className="text-crimson group-hover:text-crimson-light transition-colors">Scroll</span>
-            </span>
-          </Link>
+          {/* Left section: Hamburger + Logo */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            <button
+              onClick={onMenuClick}
+              className="text-white/80 hover:text-white p-2 rounded-lg hover:bg-white/5 transition-colors focus:outline-none"
+              aria-label="Open Sidebar"
+            >
+              <Bars3Icon className="w-6 h-6" />
+            </button>
+            <Link
+              to="/"
+              onClick={() => { onSearchChange(''); setMobileSearchOpen(false); }}
+              className="flex items-center gap-2 shrink-0 group min-h-[44px] pl-1"
+            >
+              <img src="/logo.png" alt="InkScroll" className="h-8 sm:h-9 w-auto" />
+              <span className="hidden sm:inline font-logo text-lg sm:text-xl font-bold tracking-[0.15em] uppercase">
+                <span className="text-white group-hover:text-white/90 transition-colors">Ink</span>
+                <span className="text-crimson group-hover:text-crimson-light transition-colors">Scroll</span>
+              </span>
+            </Link>
+          </div>
 
           {/* Desktop search bar */}
           <div className="relative w-full max-w-[420px] hidden sm:block">
