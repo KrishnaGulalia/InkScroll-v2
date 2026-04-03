@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useAuth } from '../hooks/useAuth';
 
 import { Bars3Icon } from '@heroicons/react/24/outline';
 
@@ -9,8 +10,23 @@ export default function Navbar({ searchQuery, onSearchChange, onMenuClick }) {
   const [scrolled, setScrolled] = useState(false);
   const debounceRef = useRef(null);
   const mobileInputRef = useRef(null);
+  const dropdownRef = useRef(null);
   const navigate = useNavigate();
   const location = useLocation();
+
+  const { user, profile, signOut } = useAuth();
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  // Handle click outside dropdown
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (dropdownRef.current && !dropdownRef.current.contains(e.target)) {
+        setDropdownOpen(false);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     setLocalQuery(searchQuery || '');
@@ -133,6 +149,76 @@ export default function Navbar({ searchQuery, onSearchChange, onMenuClick }) {
               </svg>
             )}
           </button>
+
+          {/* Auth Section */}
+          <div className="flex items-center gap-3 pr-1">
+            {!user ? (
+              <Link 
+                to="/auth" 
+                className="hidden sm:flex items-center justify-center px-4 py-2 border border-white/20 hover:border-crimson hover:text-crimson transition-colors rounded-full text-sm font-medium focus:outline-none"
+              >
+                Sign In
+              </Link>
+            ) : (
+              <div className="relative" ref={dropdownRef}>
+                <button 
+                  onClick={() => setDropdownOpen(!dropdownOpen)}
+                  className="w-[34px] h-[34px] rounded-full border-2 border-transparent hover:border-crimson transition-all overflow-hidden flex items-center justify-center bg-crimson shadow-md text-white font-logo font-bold"
+                >
+                  {profile?.avatar_url ? (
+                    <img src={profile.avatar_url} alt="User" className="w-full h-full object-cover" />
+                  ) : (
+                    profile?.username?.charAt(0).toUpperCase() || 'U'
+                  )}
+                </button>
+
+                {/* Dropdown Menu */}
+                {dropdownOpen && (
+                  <div className="absolute right-0 mt-3 w-56 bg-[#111420] border border-white/10 rounded-xl shadow-[0_20px_60px_rgba(0,0,0,0.5)] overflow-hidden animate-fadeIn font-body text-sm z-[60]">
+                    <div className="p-4 border-b border-white/10 flex items-center gap-3">
+                      <div className="w-10 h-10 rounded-full bg-crimson overflow-hidden flex items-center justify-center shrink-0">
+                        {profile?.avatar_url ? (
+                          <img src={profile.avatar_url} alt="User" className="w-full h-full object-cover" />
+                        ) : (
+                          <span className="text-white font-logo font-bold">
+                            {profile?.username?.charAt(0).toUpperCase() || 'U'}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-white font-medium truncate">{profile?.display_name || profile?.username}</p>
+                        <p className="text-txt-muted text-xs truncate">@{profile?.username}</p>
+                      </div>
+                    </div>
+                    
+                    <div className="py-2">
+                      <Link to="/profile" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-txt-secondary hover:text-white hover:bg-white/5 transition-colors">
+                        My Profile
+                      </Link>
+                      <Link to="/profile?tab=list" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-txt-secondary hover:text-white hover:bg-white/5 transition-colors">
+                        My List
+                      </Link>
+                      <Link to="/settings" onClick={() => setDropdownOpen(false)} className="block px-4 py-2 text-txt-secondary hover:text-white hover:bg-white/5 transition-colors">
+                        Settings
+                      </Link>
+                    </div>
+
+                    <div className="py-2 border-t border-white/10">
+                      <button 
+                        onClick={() => {
+                          setDropdownOpen(false);
+                          signOut();
+                        }} 
+                        className="w-full text-left px-4 py-2 text-red-500 hover:bg-red-500/10 transition-colors"
+                      >
+                        Sign Out
+                      </button>
+                    </div>
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
         </div>
       </nav>
 

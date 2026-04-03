@@ -6,6 +6,11 @@ import Detail from './pages/Detail';
 import Genre from './pages/Genre';
 import AiDrawer from './components/AiDrawer';
 import Sidebar from './components/Sidebar';
+import Auth from './pages/Auth';
+import Profile from './pages/Profile';
+import Settings from './pages/Settings';
+import ProtectedRoute from './components/ProtectedRoute';
+import { AuthProvider } from './context/AuthContext';
 
 function AppContent({ searchQuery, setSearchQuery }) {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -26,6 +31,9 @@ function AppContent({ searchQuery, setSearchQuery }) {
           <Route path="/" element={<Home searchQuery={searchQuery} />} />
           <Route path="/manga/:id" element={<Detail />} />
           <Route path="/genre/:genreName" element={<Genre />} />
+          <Route path="/auth" element={<Auth />} />
+          <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
+          <Route path="/settings" element={<ProtectedRoute><Settings /></ProtectedRoute>} />
         </Routes>
       </main>
       {/* AI Drawer — globally available on all pages */}
@@ -39,7 +47,9 @@ function App() {
 
   return (
     <BrowserRouter>
-      <AppContent searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      <AuthProvider>
+        <AppContent searchQuery={searchQuery} setSearchQuery={setSearchQuery} />
+      </AuthProvider>
     </BrowserRouter>
   );
 }

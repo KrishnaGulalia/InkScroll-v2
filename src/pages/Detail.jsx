@@ -3,6 +3,10 @@ import { useParams, Link } from 'react-router-dom';
 import { useMediaDetail } from '../hooks/useAniList';
 import { DetailSkeleton } from '../components/Loader';
 import WhereToRead from '../components/WhereToRead';
+import { useAuth } from '../hooks/useAuth';
+import { useReadingList } from '../hooks/useReadingList';
+import { useNavigate } from 'react-router-dom';
+import { CheckCircleIcon, PlusIcon, ChevronDownIcon, TrashIcon } from '@heroicons/react/24/outline';
 
 const COUNTRY_LABEL = { JP: '🇯🇵 Manga', KR: '🇰🇷 Manhwa', CN: '🇨🇳 Manhua', TW: '🇹🇼 Manhua' };
 
@@ -17,6 +21,19 @@ export default function Detail() {
   const { id } = useParams();
   const { media, loading, error } = useMediaDetail(id);
   const [activeTab, setActiveTab] = useState('overview');
+
+  const { user } = useAuth();
+  const navigate = useNavigate();
+  const { 
+    getListStatus, 
+    getListItem, 
+    addToList, 
+    updateStatus, 
+    removeFromList,
+    updateProgress 
+  } = useReadingList();
+
+  const [dropdownOpen, setDropdownOpen] = useState(false);
 
   if (loading) return <DetailSkeleton />;
   if (error) return (
@@ -118,6 +135,23 @@ export default function Detail() {
                   {g}
                 </span>
               ))}
+            </div>
+
+            {/* Reading List Actions */}
+            <div className="mt-5 sm:mt-6 flex justify-center sm:justify-start relative">
+              <AddToListButton 
+                media={media}
+                user={user}
+                navigate={navigate}
+                getListStatus={getListStatus}
+                getListItem={getListItem}
+                addToList={addToList}
+                updateStatus={updateStatus}
+                removeFromList={removeFromList}
+                updateProgress={updateProgress}
+                dropdownOpen={dropdownOpen}
+                setDropdownOpen={setDropdownOpen}
+              />
             </div>
           </div>
         </div>
@@ -309,5 +343,111 @@ function StatPill({ label }) {
     <span className="px-2 sm:px-3 py-1 sm:py-1.5 rounded-lg bg-elevated text-txt-muted text-[11px] sm:text-xs border border-line capitalize">
       {label}
     </span>
+  );
+}
+
+function AddToListButton({ media, user, navigate, getListStatus, getListItem, addToList, updateStatus, removeFromList, updateProgress, dropdownOpen, setDropdownOpen }) {
+  const status = getListStatus(media.id);
+  const listItem = getListItem(media.id);
+
+  const STATUS_OPTIONS = [
+    { value: 'reading', label: 'Reading' },
+    { value: 'plan_to_read', label: 'Plan to Read' },
+    { value: 'completed', label: 'Completed' },
+    { value: 'on_hold', label: 'On Hold' },
+    { value: 'dropped', label: 'Dropped' }
+  ];
+
+  const handleClick = () => {
+    if (!user) {
+      navigate('/auth');
+      return;
+    }
+    setDropdownOpen(!dropdownOpen);
+  };
+
+  const handleSelectStatus = async (val) => {
+    try {
+      if (!status) await addToList(media, val);
+      else await updateStatus(media.id, val);
+    } catch (err) {
+      console.error(err);
+    }
+    setDropdownOpen(false);
+  };
+
+  return (
+    <div className="relative">
+      <button 
+        onClick={handleClick}
+        className={`px-5 py-2.5 rounded-lg font-bold text-sm transition-all flex items-center justify-center gap-2 min-w-[160px] ${
+          status 
+            ? 'bg-card border border-line hover:border-line-hover text-white shadow-sm'
+            : 'bg-crimson hover:bg-crimson-light text-white shadow-lg shadow-crimson/20'
+        }`}
+      >
+        {status ? (
+          <>
+            <CheckCircleIcon className="w-5 h-5 text-green-500" />
+            <span className="capitalize">{status.replace(/_/g, ' ')}</span>
+            <ChevronDownIcon className="w-4 h-4 ml-2 text-txt-muted" />
+          </>
+        ) : (
+          <>
+            <PlusIcon className="w-5 h-5" />
+            Add to List
+          </>
+        )}
+      </button>
+
+      {/* Current Progress Inline (shown if logged in and in list) */}
+      {status && listItem && (
+        <div className="mt-3 flex items-center justify-center sm:justify-start gap-3">
+          <span className="text-xs text-txt-muted uppercase font-bold tracking-widest">Progress:</span>
+          <div className="flex items-center gap-2 bg-card border border-line rounded-lg px-2 py-1">
+            <span className="text-sm font-mono text-white">{listItem.current_chapter} <span className="text-txt-muted text-xs">/ {media.chapters || '?'}</span></span>
+            <button 
+              onClick={() => updateProgress(media.id, listItem.current_chapter + 1)}
+              className="text-crimson hover:text-crimson-light p-1 rounded hover:bg-crimson/10 transition-colors"
+            >
+              <PlusIcon className="w-4 h-4" />
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Status Dropdown */}
+      {dropdownOpen && (
+        <>
+          <div className="fixed inset-0 z-40" onClick={() => setDropdownOpen(false)} />
+          <div className="absolute top-full left-0 sm:left-auto sm:right-0 mt-2 w-[180px] bg-[#111420] border border-white/10 rounded-xl shadow-xl z-50 overflow-hidden animate-fadeIn py-1">
+            {STATUS_OPTIONS.map(opt => (
+              <button 
+                key={opt.value}
+                onClick={() => handleSelectStatus(opt.value)}
+                className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                  status === opt.value ? 'bg-crimson/10 text-crimson font-medium' : 'text-txt-primary hover:bg-white/5'
+                }`}
+              >
+                {opt.label}
+              </button>
+            ))}
+            
+            {status && (
+              <>
+                <div className="h-px bg-white/5 my-1" />
+                <button 
+                  onClick={async () => { await removeFromList(media.id); setDropdownOpen(false); }}
+                  className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 flex items-center justify-between transition-colors"
+                >
+                  Remove
+                  <TrashIcon className="w-4 h-4" />
+                </button>
+              </>
+            )}
+          </div>
+        </>
+      )}
+    </div>
   );
 }

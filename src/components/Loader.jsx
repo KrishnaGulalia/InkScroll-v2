@@ -95,3 +95,11 @@ export function Spinner() {
     </div>
   );
 }
+
+export function FullPageSpinner() {
+  return (
+    <div className="flex justify-center items-center h-full min-h-[300px]">
+      <div className="w-10 h-10 border-2 border-crimson/30 border-t-crimson rounded-full animate-spin" />
+    </div>
+  );
+}
