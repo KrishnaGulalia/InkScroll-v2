@@ -4,7 +4,7 @@ import { useMediaList } from '../hooks/useAniList';
 import { useHomeSections } from '../hooks/useHomeSections';
 import Hero from '../components/Hero';
 import FilterBar from '../components/FilterBar';
-import CategoryPills from '../components/CategoryPills';
+import CategoryPills, { CATEGORIES } from '../components/CategoryPills';
 import MediaGrid from '../components/MediaGrid';
 import MediaRow from '../components/MediaRow';
 import { GridSkeleton, HomeSkeleton, Spinner } from '../components/Loader';
@@ -41,6 +41,14 @@ export default function Home({ searchQuery }) {
   const isSearching = !!searchQuery;
   const showSections = !isSearching && !hasUrlFilters;
   
+  // Calculate active category pill for styling
+  const activeSort = searchParams.get('sort');
+  const activeCountry = searchParams.get('country');
+  const activeStatus = searchParams.get('status');
+  const activeCategory = (!hasUrlFilters && !isSearching) 
+    ? null // "For You"
+    : CATEGORIES.find(c => c.sort === activeSort && c.country === (activeCountry || null) && c.status === (activeStatus || null));
+
   const { media, loading, error, pageInfo, filters, updateFilters, loadMore } = useMediaList({ skip: showSections });
   const { sections, heroItems, loading: sectionsLoading } = useHomeSections();
 
@@ -104,12 +112,12 @@ export default function Home({ searchQuery }) {
       {showSections && heroItems.length > 0 && <Hero items={heroItems} />}
 
       {/* Content area */}
-      <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 -mt-6 sm:-mt-8 relative z-10 pb-16 sm:pb-24 flex flex-col gap-8 sm:gap-10">
+      <div className={`max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 ${showSections && heroItems.length > 0 ? 'pt-3 sm:pt-4' : 'pt-4 sm:pt-6'} pb-16 sm:pb-24 flex flex-col gap-8 sm:gap-10`}>
 
         {/* Category Pills (Visible everywhere on Home) */}
-        <section className="pt-2 sm:pt-4">
+        <section>
           <CategoryPills 
-            activeCategory={null} 
+            activeCategory={activeCategory} 
             onCategoryChange={(cat) => {
               if (!cat) handleClearFilters();
               else {

@@ -126,33 +126,33 @@ export default function FilterBar({ filters, onFilterChange, onClear, resultsCou
       </div>
 
       {/* Bottom Row: Dropdowns */}
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="grid grid-cols-2 sm:flex sm:flex-wrap items-center gap-2 sm:gap-3 w-full">
         <CustomDropdown 
           options={GENRES} 
           value={activeGenre} 
           onChange={(val) => onFilterChange('genre', val === 'All Genres' ? null : val)} 
           placeholder="All Genres"
-          width="w-36 sm:w-44"
+          width="w-full sm:w-44"
         />
         <CustomDropdown 
           options={STATUSES} 
           value={activeStatus} 
           onChange={(val) => onFilterChange('status', val === 'ALL' ? null : val)} 
           placeholder="All Status"
-          width="w-36 sm:w-40"
+          width="w-full sm:w-40"
         />
         <CustomDropdown 
           options={SORTS} 
           value={activeSort} 
           onChange={(val) => onFilterChange('sort', val === 'ALL' ? null : [val])} 
           placeholder="Trending"
-          width="w-36 sm:w-44"
+          width="w-full sm:w-44"
         />
 
         {hasActiveFilters && (
           <button 
             onClick={onClear}
-            className="flex items-center gap-1.5 px-4 py-2.5 text-[13px] font-body font-medium text-crimson hover:text-crimson-light hover:bg-crimson/5 rounded-lg transition-colors ml-auto sm:ml-0"
+            className="col-span-2 sm:col-span-1 flex items-center justify-center gap-1.5 px-4 py-2 text-[13px] font-body font-medium text-crimson hover:text-crimson-light hover:bg-crimson/5 rounded-lg transition-colors ml-auto sm:ml-0 border border-crimson/20 sm:border-transparent mt-1 sm:mt-0"
           >
             <XMarkIcon className="w-4 h-4" />
             Clear Filters

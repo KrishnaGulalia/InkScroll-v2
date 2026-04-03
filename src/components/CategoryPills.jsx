@@ -1,11 +1,11 @@
 import { HomeIcon, ArrowTrendingUpIcon, FireIcon, StarIcon, CalendarIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 
-const CATEGORIES = [
-  { label: 'Trending Manhwa', icon: ArrowTrendingUpIcon, sort: 'trending', country: 'KR', status: null },
-  { label: 'Trending Manga', icon: FireIcon, sort: 'trending', country: 'JP', status: null },
-  { label: 'Top Rated', icon: StarIcon, sort: 'score', country: null, status: null },
-  { label: 'New Releases', icon: CalendarIcon, sort: 'latest', country: null, status: null },
-  { label: 'Completed', icon: CheckCircleIcon, sort: 'popular', country: null, status: 'FINISHED' },
+export const CATEGORIES = [
+  { label: 'Trending Manhwa', icon: ArrowTrendingUpIcon, sort: 'TRENDING_DESC', country: 'KR', status: null },
+  { label: 'Trending Manga', icon: FireIcon, sort: 'TRENDING_DESC', country: 'JP', status: null },
+  { label: 'Top Rated', icon: StarIcon, sort: 'SCORE_DESC', country: null, status: null },
+  { label: 'New Releases', icon: CalendarIcon, sort: 'START_DATE_DESC', country: null, status: null },
+  { label: 'Completed', icon: CheckCircleIcon, sort: 'POPULARITY_DESC', country: null, status: 'FINISHED' },
 ];
 
 export default function CategoryPills({ activeCategory, onCategoryChange }) {

@@ -17,9 +17,9 @@ import {
 
 const DISCOVER_LINKS = [
   { label: 'Home', icon: HomeIcon, to: '/' },
-  { label: 'Trending', icon: ArrowTrendingUpIcon, to: '/?sort=trending' },
-  { label: 'New Releases', icon: SparklesIcon, to: '/?sort=latest' },
-  { label: 'Top Rated', icon: StarIcon, to: '/?sort=score' },
+  { label: 'Trending', icon: ArrowTrendingUpIcon, to: '/?sort=TRENDING_DESC' },
+  { label: 'New Releases', icon: SparklesIcon, to: '/?sort=START_DATE_DESC' },
+  { label: 'Top Rated', icon: StarIcon, to: '/?sort=SCORE_DESC' },
   { label: 'Completed', icon: CheckCircleIcon, to: '/?status=FINISHED' },
 ];
 

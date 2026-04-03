@@ -54,9 +54,12 @@ export function useMediaList(options = {}) {
     setLoading(true);
     setError(null);
 
+    const providedSort = Array.isArray(debouncedFilters.sort) ? debouncedFilters.sort[0] : debouncedFilters.sort;
+    const finalSort = [SORT_MAP[providedSort]?.[0] || providedSort || 'TRENDING_DESC'];
+
     const variables = {
       page: debouncedFilters.page,
-      sort: Array.isArray(debouncedFilters.sort) ? debouncedFilters.sort : (SORT_MAP[debouncedFilters.sort] || ['TRENDING_DESC']),
+      sort: finalSort,
     };
     if (debouncedFilters.genre) variables.genre = debouncedFilters.genre;
     if (debouncedFilters.country) variables.country = debouncedFilters.country;
