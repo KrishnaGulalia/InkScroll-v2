@@ -1,0 +1,3 @@
+{
+  "query": "query { trending: Page(page: 1, perPage: 2) { media(type: MANGA, sort: TRENDING_DESC) { id } } popular: Page(page: 1, perPage: 2) { media(type: MANGA, sort: POPULARITY_DESC) { id } } }"
+}

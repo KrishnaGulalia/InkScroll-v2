@@ -1,5 +1,19 @@
 const ANILIST_URL = 'https://graphql.anilist.co';
 
+const MEDIA_FRAGMENT = `
+  id
+  title { english romaji }
+  coverImage { large extraLarge color }
+  bannerImage
+  averageScore
+  popularity
+  genres
+  countryOfOrigin
+  status
+  chapters
+  startDate { year }
+`;
+
 const MEDIA_LIST_QUERY = `
 query ($page: Int, $perPage: Int, $sort: [MediaSort], $genre: String, $country: CountryCode, $search: String, $status: MediaStatus, $averageScore_greater: Int, $popularity_lesser: Int) {
   Page(page: $page, perPage: $perPage) {
@@ -15,18 +29,37 @@ query ($page: Int, $perPage: Int, $sort: [MediaSort], $genre: String, $country: 
       popularity_lesser: $popularity_lesser
       isAdult: false
     ) {
-      id
-      title { english romaji }
-      coverImage { large extraLarge color }
-      bannerImage
-      averageScore
-      popularity
-      genres
-      countryOfOrigin
-      status
-      chapters
-      startDate { year }
+      ${MEDIA_FRAGMENT}
     }
+  }
+}
+`;
+
+const HOME_SECTIONS_QUERY = `
+query {
+  trending: Page(page: 1, perPage: 20) {
+    media(type: MANGA, sort: TRENDING_DESC, isAdult: false) { ${MEDIA_FRAGMENT} }
+  }
+  hotManhwa: Page(page: 1, perPage: 20) {
+    media(type: MANGA, sort: TRENDING_DESC, countryOfOrigin: "KR", isAdult: false) { ${MEDIA_FRAGMENT} }
+  }
+  popularManga: Page(page: 1, perPage: 20) {
+    media(type: MANGA, sort: POPULARITY_DESC, countryOfOrigin: "JP", isAdult: false) { ${MEDIA_FRAGMENT} }
+  }
+  manhuaPicks: Page(page: 1, perPage: 20) {
+    media(type: MANGA, sort: POPULARITY_DESC, countryOfOrigin: "CN", isAdult: false) { ${MEDIA_FRAGMENT} }
+  }
+  topRated: Page(page: 1, perPage: 20) {
+    media(type: MANGA, sort: SCORE_DESC, isAdult: false) { ${MEDIA_FRAGMENT} }
+  }
+  newReleases: Page(page: 1, perPage: 20) {
+    media(type: MANGA, sort: START_DATE_DESC, status: RELEASING, isAdult: false) { ${MEDIA_FRAGMENT} }
+  }
+  completed: Page(page: 1, perPage: 20) {
+    media(type: MANGA, sort: POPULARITY_DESC, status: FINISHED, isAdult: false) { ${MEDIA_FRAGMENT} }
+  }
+  hiddenGems: Page(page: 1, perPage: 20) {
+    media(type: MANGA, sort: SCORE_DESC, averageScore_greater: 75, popularity_lesser: 5000, isAdult: false) { ${MEDIA_FRAGMENT} }
   }
 }
 `;
@@ -218,4 +251,9 @@ export async function fetchMediaList(variables = {}) {
 export async function fetchMediaDetail(id) {
   const data = await anilistFetch(MEDIA_DETAIL_QUERY, { id: parseInt(id) });
   return data.Media;
+}
+
+export async function fetchHomeData() {
+  const data = await anilistFetch(HOME_SECTIONS_QUERY, {});
+  return data;
 }
