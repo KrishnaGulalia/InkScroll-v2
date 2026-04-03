@@ -32,9 +32,14 @@ const GENRE_CARDS = [
 ];
 
 export default function Home({ searchQuery }) {
-  const { media, loading, error, pageInfo, filters, updateFilters, loadMore } = useMediaList();
-  const { sections, heroItems, loading: sectionsLoading } = useHomeSections();
   const [activeCategory, setActiveCategory] = useState(null);
+  
+  const isSearching = !!searchQuery;
+  const isCategoryActive = !!activeCategory;
+  const showSections = !isSearching && !isCategoryActive;
+  
+  const { media, loading, error, pageInfo, filters, updateFilters, loadMore } = useMediaList({ skip: showSections });
+  const { sections, heroItems, loading: sectionsLoading } = useHomeSections();
   const location = useLocation();
   const scrollRestored = useRef(false);
 
@@ -81,10 +86,7 @@ export default function Home({ searchQuery }) {
     }
   };
 
-  const isSearching = !!filters.search;
-  const isCategoryActive = !!activeCategory;
   const isFiltering = !!filters.genre || isCategoryActive;
-  const showSections = !isSearching && !isFiltering;
   const isFirstLoad = loading && media.length === 0;
   const isLoadingMore = loading && media.length > 0;
 

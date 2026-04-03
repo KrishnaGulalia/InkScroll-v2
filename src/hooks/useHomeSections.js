@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { fetchMediaList } from '../lib/anilist';
 
 const SECTION_CONFIGS = [
@@ -56,22 +56,30 @@ export function useHomeSections() {
   const [sections, setSections] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
+  const fetchedRef = useRef(false);
 
   useEffect(() => {
     let cancelled = false;
     setLoading(true);
+    setError(null);
 
-    Promise.all(
-      SECTION_CONFIGS.map(async (config) => {
+    // Fetch all sections — the throttled queue in anilist.js
+    // will automatically stagger requests with delays
+    async function loadSections() {
+      const results = [];
+
+      // Fire all requests — they'll be queued and throttled automatically
+      const promises = SECTION_CONFIGS.map(async (config) => {
         try {
           const result = await fetchMediaList(config.variables);
           return {
             key: config.key,
             title: config.title,
             emoji: config.emoji,
-            media: result.media || [],
+            media: result?.media || [],
           };
-        } catch {
+        } catch (err) {
+          console.warn(`[Section] Failed to load ${config.key}:`, err.message);
           return {
             key: config.key,
             title: config.title,
@@ -79,20 +87,30 @@ export function useHomeSections() {
             media: [],
           };
         }
-      })
-    )
-      .then((results) => {
-        if (!cancelled) {
-          setSections(results.filter((s) => s.media.length > 0));
-          setLoading(false);
-        }
-      })
-      .catch((err) => {
-        if (!cancelled) {
-          setError(err.message);
-          setLoading(false);
-        }
       });
+
+      // As each resolves, update state progressively
+      for (const promise of promises) {
+        const result = await promise;
+        if (cancelled) return;
+        if (result.media.length > 0) {
+          results.push(result);
+          // Update state incrementally so sections appear as they load
+          setSections([...results]);
+        }
+      }
+
+      if (!cancelled) {
+        setLoading(false);
+      }
+    }
+
+    loadSections().catch((err) => {
+      if (!cancelled) {
+        setError(err.message);
+        setLoading(false);
+      }
+    });
 
     return () => {
       cancelled = true;

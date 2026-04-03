@@ -74,20 +74,144 @@ query ($id: Int) {
 }
 `;
 
-async function anilistFetch(query, variables = {}) {
-  const res = await fetch(ANILIST_URL, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-    body: JSON.stringify({ query, variables }),
-  });
-  if (!res.ok) throw new Error(`AniList error: ${res.status}`);
-  const json = await res.json();
-  if (json.errors) throw new Error(json.errors[0]?.message || 'AniList query failed');
-  return json.data;
+// ─── In-memory cache ───────────────────────────────────
+const cache = new Map();
+const CACHE_TTL = 15 * 60 * 1000; // 15 minutes
+
+function getCacheKey(query, variables) {
+  return query.slice(0, 30) + JSON.stringify(variables);
 }
 
+function getCached(key) {
+  // Try memory cache first
+  const entry = cache.get(key);
+  if (entry && Date.now() - entry.time < CACHE_TTL) {
+    return entry.data;
+  }
+  cache.delete(key);
+
+  // Try localStorage
+  try {
+    const stored = localStorage.getItem('anilist_' + key);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Date.now() - parsed.time < CACHE_TTL) {
+        cache.set(key, parsed);
+        return parsed.data;
+      }
+      localStorage.removeItem('anilist_' + key);
+    }
+  } catch {}
+  return null;
+}
+
+function setCache(key, data) {
+  const entry = { data, time: Date.now() };
+  cache.set(key, entry);
+  // Evict old entries if cache grows too large
+  if (cache.size > 50) {
+    const oldest = cache.keys().next().value;
+    cache.delete(oldest);
+  }
+  // Also persist to localStorage
+  try {
+    localStorage.setItem('anilist_' + key, JSON.stringify(entry));
+  } catch {}
+}
+
+// ─── Request queue with throttling ─────────────────────
+let requestQueue = Promise.resolve();
+const MIN_DELAY = 1200; // ms between requests — keeps us well under AniList's ~30 req/min limit
+
+function enqueue(fn) {
+  requestQueue = requestQueue
+    .then(() => delay(MIN_DELAY))
+    .then(fn)
+    .catch((err) => {
+      // Don't break the chain
+      throw err;
+    });
+  return requestQueue;
+}
+
+function delay(ms) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// ─── Fetch with retry + backoff ────────────────────────
+async function anilistFetch(query, variables = {}, retries = 4) {
+  const cacheKey = getCacheKey(query, variables);
+  const cached = getCached(cacheKey);
+  if (cached) return cached;
+
+  const attempt = async (tryNum) => {
+    let res;
+    try {
+      res = await fetch(ANILIST_URL, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+        body: JSON.stringify({ query, variables }),
+      });
+    } catch (fetchErr) {
+      // Network error / CORS blocked — likely a 429 that stripped CORS headers
+      if (tryNum < retries) {
+        const backoff = 2000 * Math.pow(2, tryNum);
+        console.warn(`[AniList] Network error (likely rate-limited). Retrying in ${backoff}ms (attempt ${tryNum + 1}/${retries})`);
+        await delay(backoff);
+        return attempt(tryNum + 1);
+      }
+      throw new Error('Network error — AniList may be rate-limiting. Please wait a moment and refresh.');
+    }
+
+    // Rate limited — retry with backoff
+    if (res.status === 429) {
+      if (tryNum < retries) {
+        const retryAfter = parseInt(res.headers.get('Retry-After') || '1', 10);
+        const backoff = Math.max(retryAfter * 1000, 1000 * Math.pow(2, tryNum));
+        console.warn(`[AniList] Rate limited. Retrying in ${backoff}ms (attempt ${tryNum + 1}/${retries})`);
+        await delay(backoff);
+        return attempt(tryNum + 1);
+      }
+      throw new Error('Rate limited by AniList. Please wait a moment and try again.');
+    }
+
+    // Server error — retry
+    if (res.status >= 500 && tryNum < retries) {
+      const backoff = 1000 * Math.pow(2, tryNum);
+      console.warn(`[AniList] Server error ${res.status}. Retrying in ${backoff}ms`);
+      await delay(backoff);
+      return attempt(tryNum + 1);
+    }
+
+    if (!res.ok) throw new Error(`AniList error: ${res.status}`);
+
+    const json = await res.json();
+    if (json.errors) throw new Error(json.errors[0]?.message || 'AniList query failed');
+
+    setCache(cacheKey, json.data);
+    return json.data;
+  };
+
+  return attempt(0);
+}
+
+// ─── Throttled fetch (queued) ──────────────────────────
+function throttledAnilistFetch(query, variables = {}) {
+  // Check cache first — skip queue if cached
+  const cacheKey = getCacheKey(query, variables);
+  const cached = getCached(cacheKey);
+  if (cached) return Promise.resolve(cached);
+
+  // Enqueue to throttle
+  return enqueue(() => anilistFetch(query, variables));
+}
+
+// ─── Public exports ────────────────────────────────────
 export async function fetchMediaList(variables = {}) {
-  const data = await anilistFetch(MEDIA_LIST_QUERY, variables);
+  const data = await throttledAnilistFetch(MEDIA_LIST_QUERY, variables);
   return data.Page;
 }
 

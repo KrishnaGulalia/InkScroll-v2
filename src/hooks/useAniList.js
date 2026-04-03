@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { fetchMediaList, fetchMediaDetail } from '../lib/anilist';
 
 const SORT_MAP = {
@@ -8,7 +8,7 @@ const SORT_MAP = {
   latest: ['START_DATE_DESC'],
 };
 
-export function useMediaList() {
+export function useMediaList(options = {}) {
   const [media, setMedia] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -22,35 +22,63 @@ export function useMediaList() {
     status: null,
   });
 
+  // Debounced filters — actual API call uses these
+  const [debouncedFilters, setDebouncedFilters] = useState(filters);
+  const debounceRef = useRef(null);
+
+  // Debounce filter changes (400ms for search, immediate for others)
   useEffect(() => {
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+
+    // If only the search text changed, debounce it
+    const isSearchChange = filters.search !== debouncedFilters.search;
+    const delayMs = isSearchChange ? 400 : 50;
+
+    debounceRef.current = setTimeout(() => {
+      setDebouncedFilters(filters);
+    }, delayMs);
+
+    return () => {
+      if (debounceRef.current) clearTimeout(debounceRef.current);
+    };
+  }, [filters]);
+
+  // Fetch whenever debounced filters change
+  useEffect(() => {
+    if (options.skip) {
+      setLoading(false);
+      return;
+    }
+
     let cancelled = false;
     setLoading(true);
     setError(null);
 
     const variables = {
-      page: filters.page,
-      sort: SORT_MAP[filters.sort] || ['TRENDING_DESC'],
+      page: debouncedFilters.page,
+      sort: SORT_MAP[debouncedFilters.sort] || ['TRENDING_DESC'],
     };
-    if (filters.genre) variables.genre = filters.genre;
-    if (filters.country) variables.country = filters.country;
-    if (filters.search) variables.search = filters.search;
-    if (filters.status) variables.status = filters.status;
+    if (debouncedFilters.genre) variables.genre = debouncedFilters.genre;
+    if (debouncedFilters.country) variables.country = debouncedFilters.country;
+    if (debouncedFilters.search) variables.search = debouncedFilters.search;
+    if (debouncedFilters.status) variables.status = debouncedFilters.status;
 
     fetchMediaList(variables)
       .then(result => {
         if (cancelled) return;
-        setMedia(prev => filters.page > 1 ? [...prev, ...result.media] : result.media);
-        setPageInfo(result.pageInfo);
+        setMedia(prev => debouncedFilters.page > 1 ? [...prev, ...(result?.media || [])] : (result?.media || []));
+        setPageInfo(result?.pageInfo || { hasNextPage: false, currentPage: 1 });
         setLoading(false);
       })
       .catch(err => {
         if (cancelled) return;
+        console.error('[useMediaList] Fetch error:', err.message);
         setError(err.message);
         setLoading(false);
       });
 
     return () => { cancelled = true; };
-  }, [filters]);
+  }, [debouncedFilters, options.skip]);
 
   const updateFilters = useCallback((newFilters) => {
     setFilters(prev => ({ ...prev, ...newFilters, page: 1 }));
@@ -81,7 +109,11 @@ export function useMediaDetail(id) {
         if (!cancelled) { setMedia(data); setLoading(false); }
       })
       .catch(err => {
-        if (!cancelled) { setError(err.message); setLoading(false); }
+        if (!cancelled) {
+          console.error('[useMediaDetail] Fetch error:', err.message);
+          setError(err.message);
+          setLoading(false);
+        }
       });
 
     return () => { cancelled = true; };
