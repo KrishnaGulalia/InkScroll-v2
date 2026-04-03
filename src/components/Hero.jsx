@@ -35,25 +35,38 @@ export default function Hero({ items = [] }) {
 
   return (
     <section className="relative h-[70vh] min-h-[420px] max-h-[600px] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] sm:min-h-[420px] sm:max-h-[700px] overflow-hidden -mt-14 sm:-mt-[60px]">
-      {/* Background banner image */}
+      {/* Background images */}
       <div
-        className={`absolute inset-0 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
+        className={`absolute inset-0 transition-opacity duration-700 ease-in-out ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
       >
-        {media.bannerImage ? (
+        {/* Desktop Banner (Horizontal) - Positioned upper-center to preserve faces */}
+        {media.bannerImage && (
           <img
             src={media.bannerImage}
             alt=""
-            className="absolute inset-0 w-full h-full object-cover scale-105"
+            className="hidden sm:block absolute inset-0 w-full h-full object-cover object-[center_15%] md:object-[center_20%] scale-105"
           />
-        ) : (
+        )}
+        
+        {/* Mobile Banner (Vertical Cover Art) - Perfect 2:3 ratio for mobile screens */}
+        {(media.coverImage?.extraLarge || media.bannerImage) && (
+          <img
+            src={media.coverImage?.extraLarge || media.bannerImage}
+            alt=""
+            className={`${media.bannerImage ? 'block sm:hidden' : 'block'} absolute inset-0 w-full h-full object-cover object-top opacity-75`}
+          />
+        )}
+
+        {!media.bannerImage && !media.coverImage?.extraLarge && (
           <div className="absolute inset-0" style={{ backgroundColor: media.coverImage?.color || '#171b2e' }} />
         )}
       </div>
 
-      {/* Gradient overlays */}
-      <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/60 to-primary/10" />
-      <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/70 to-transparent hidden sm:block" />
-      <div className="absolute bottom-0 left-0 right-0 h-20 sm:h-24 bg-gradient-to-t from-primary to-transparent" />
+      {/* Cinematic Overlays */}
+      <div className="absolute inset-0 bg-gradient-to-t from-primary via-primary/70 to-primary/20" />
+      <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary/40 to-transparent hidden sm:block" />
+      <div className="absolute top-0 left-0 right-0 h-32 bg-gradient-to-b from-primary/80 to-transparent" />
+      <div className="absolute bottom-0 left-0 right-0 h-24 sm:h-32 bg-gradient-to-t from-primary to-transparent" />
 
       {/* Content */}
       <div className="relative z-10 h-full max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-8 flex items-end pb-12 sm:pb-16">
