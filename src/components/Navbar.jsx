@@ -155,7 +155,7 @@ export default function Navbar({ searchQuery, onSearchChange, onMenuClick }) {
             {!user ? (
               <Link 
                 to="/auth" 
-                className="hidden sm:flex items-center justify-center px-4 py-2 border border-white/20 hover:border-crimson hover:text-crimson transition-colors rounded-full text-sm font-medium focus:outline-none"
+                className="flex items-center justify-center px-3 sm:px-4 py-1.5 sm:py-2 border border-white/20 hover:border-crimson hover:text-crimson transition-colors rounded-full text-xs sm:text-sm font-medium focus:outline-none whitespace-nowrap min-h-[36px] sm:min-h-[40px]"
               >
                 Sign In
               </Link>
