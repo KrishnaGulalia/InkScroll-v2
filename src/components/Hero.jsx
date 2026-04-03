@@ -34,7 +34,7 @@ export default function Hero({ items = [] }) {
   const title = media.title?.english || media.title?.romaji || '';
 
   return (
-    <section className="relative h-[280px] sm:h-[45vh] md:h-[55vh] lg:h-[60vh] sm:min-h-[380px] sm:max-h-[600px] overflow-hidden">
+    <section className="relative h-[70vh] min-h-[420px] max-h-[600px] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] sm:min-h-[420px] sm:max-h-[700px] overflow-hidden -mt-14 sm:-mt-[60px]">
       {/* Background banner image */}
       <div
         className={`absolute inset-0 transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}
@@ -61,25 +61,25 @@ export default function Hero({ items = [] }) {
           className={`w-full sm:max-w-2xl transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-x-[-10px]' : 'opacity-100 translate-x-0'}`}
         >
           {/* Badge */}
-          <span className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-crimson/20 border border-crimson/30 text-crimson text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-3 sm:mb-5">
+          <span className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-crimson/20 border border-crimson/30 text-crimson text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-3 sm:mb-5 font-body">
             <span className="w-1.5 h-1.5 rounded-full bg-crimson animate-pulse" />
             Trending Now
           </span>
 
-          {/* Title */}
-          <h2 className="font-heading text-[28px] sm:text-4xl md:text-5xl lg:text-[56px] font-bold text-white leading-[1.1] tracking-wide">
+          {/* Title — uses Playfair Display */}
+          <h2 className="font-display text-[28px] sm:text-4xl md:text-5xl lg:text-[56px] font-bold text-white leading-[1.1] tracking-wide italic">
             {title}
           </h2>
 
           {/* Score + Genres */}
           <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-3 sm:mt-5">
             {media.averageScore && (
-              <span className="flex items-center gap-1 sm:gap-1.5 bg-gold/15 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-gold font-bold text-xs sm:text-sm border border-gold/20">
+              <span className="flex items-center gap-1 sm:gap-1.5 bg-gold/15 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-gold font-bold text-xs sm:text-sm border border-gold/20 font-body">
                 ★ {(media.averageScore / 10).toFixed(1)}
               </span>
             )}
             {media.genres?.slice(0, 2).map((g) => (
-              <span key={g} className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/8 text-white/60 text-[11px] sm:text-xs border border-white/5">
+              <span key={g} className="px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/8 text-white/60 text-[11px] sm:text-xs border border-white/5 font-body">
                 {g}
               </span>
             ))}
@@ -89,14 +89,14 @@ export default function Hero({ items = [] }) {
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center gap-2 sm:gap-3 mt-5 sm:mt-7">
             <Link
               to={`/manga/${media.id}`}
-              className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 bg-crimson hover:bg-crimson-hover text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-crimson/30 active:scale-[0.98] text-sm sm:text-base min-h-[44px]"
+              className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 bg-crimson hover:bg-crimson-hover text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-crimson/30 active:scale-[0.98] text-sm sm:text-base min-h-[44px] font-body"
             >
               View Details
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7l5 5m0 0l-5 5m5-5H6" />
               </svg>
             </Link>
-            <button className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 bg-transparent border border-white/20 hover:border-white/40 text-white/80 hover:text-white font-medium rounded-xl transition-all duration-300 hover:bg-white/5 text-sm sm:text-base min-h-[44px]">
+            <button className="inline-flex items-center justify-center gap-2 px-5 sm:px-6 py-3 bg-transparent border border-white/20 hover:border-white/40 text-white/80 hover:text-white font-medium rounded-xl transition-all duration-300 hover:bg-white/5 text-sm sm:text-base min-h-[44px] font-body">
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v16m8-8H4" />
               </svg>

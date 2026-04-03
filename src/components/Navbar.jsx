@@ -4,6 +4,7 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 export default function Navbar({ searchQuery, onSearchChange }) {
   const [localQuery, setLocalQuery] = useState(searchQuery || '');
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
+  const [scrolled, setScrolled] = useState(false);
   const debounceRef = useRef(null);
   const mobileInputRef = useRef(null);
   const navigate = useNavigate();
@@ -19,6 +20,16 @@ export default function Navbar({ searchQuery, onSearchChange }) {
       setTimeout(() => mobileInputRef.current?.focus(), 100);
     }
   }, [mobileSearchOpen]);
+
+  // Track scroll position — navbar becomes solid after scrolling past hero
+  useEffect(() => {
+    const handleScroll = () => {
+      setScrolled(window.scrollY > 80);
+    };
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    handleScroll(); // initial check
+    return () => window.removeEventListener('scroll', handleScroll);
+  }, []);
 
   const handleChange = (e) => {
     const value = e.target.value;
@@ -36,9 +47,29 @@ export default function Navbar({ searchQuery, onSearchChange }) {
     setMobileSearchOpen(false);
   };
 
+  // On homepage at top: fully transparent. After scroll or on other pages: frosted glass
+  const isHomePage = location.pathname === '/';
+  const showTransparent = isHomePage && !scrolled;
+
   return (
     <>
-      <nav className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-[60px] bg-primary/80 backdrop-blur-xl border-b border-line">
+      <nav
+        className="fixed top-0 left-0 right-0 z-50 h-14 sm:h-[60px] transition-all duration-500 ease-out"
+        style={{
+          background: showTransparent
+            ? 'transparent'
+            : 'rgba(7, 8, 15, 0.75)',
+          backdropFilter: showTransparent
+            ? 'blur(0px)'
+            : 'blur(24px) saturate(1.4)',
+          WebkitBackdropFilter: showTransparent
+            ? 'blur(0px)'
+            : 'blur(24px) saturate(1.4)',
+          borderBottom: showTransparent
+            ? '1px solid transparent'
+            : '1px solid rgba(255,255,255,0.06)',
+        }}
+      >
         <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 h-full flex items-center justify-between gap-3 sm:gap-4">
           {/* Logo */}
           <Link
@@ -47,7 +78,7 @@ export default function Navbar({ searchQuery, onSearchChange }) {
             className="flex items-center gap-2 shrink-0 group min-h-[44px]"
           >
             <img src="/logo.png" alt="InkScroll" className="h-8 sm:h-9 w-auto" />
-            <span className="hidden sm:inline font-heading text-lg sm:text-xl font-bold tracking-[0.15em] uppercase">
+            <span className="hidden sm:inline font-logo text-lg sm:text-xl font-bold tracking-[0.15em] uppercase">
               <span className="text-white group-hover:text-white/90 transition-colors">Ink</span>
               <span className="text-crimson group-hover:text-crimson-light transition-colors">Scroll</span>
             </span>
@@ -64,7 +95,7 @@ export default function Navbar({ searchQuery, onSearchChange }) {
               value={localQuery}
               onChange={handleChange}
               id="navbar-search"
-              className="w-full pl-11 pr-10 py-2.5 bg-elevated border border-line rounded-full text-sm text-txt-primary placeholder-txt-muted focus:outline-none focus:border-crimson/40 focus:ring-1 focus:ring-crimson/20 transition-all"
+              className="w-full pl-11 pr-10 py-2.5 bg-elevated border border-line rounded-full text-sm text-txt-primary placeholder-txt-muted focus:outline-none focus:border-crimson/40 focus:ring-1 focus:ring-crimson/20 transition-all font-body"
             />
             {localQuery && (
               <button onClick={handleClear} className="absolute right-3.5 top-1/2 -translate-y-1/2 text-txt-muted hover:text-txt-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center">
@@ -77,7 +108,7 @@ export default function Navbar({ searchQuery, onSearchChange }) {
 
           {/* Mobile search toggle */}
           <button
-            className="sm:hidden text-txt-secondary hover:text-txt-primary transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
+            className="sm:hidden text-white/80 hover:text-white transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
             onClick={() => setMobileSearchOpen(!mobileSearchOpen)}
             aria-label="Search"
           >
@@ -107,7 +138,7 @@ export default function Navbar({ searchQuery, onSearchChange }) {
               placeholder="Search manga, manhwa, manhua..."
               value={localQuery}
               onChange={handleChange}
-              className="w-full pl-10 pr-10 py-3 bg-elevated border border-line rounded-full text-sm text-txt-primary placeholder-txt-muted focus:outline-none focus:border-crimson/40 transition-all"
+              className="w-full pl-10 pr-10 py-3 bg-elevated border border-line rounded-full text-sm text-txt-primary placeholder-txt-muted focus:outline-none focus:border-crimson/40 transition-all font-body"
             />
             {localQuery && (
               <button onClick={handleClear} className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-muted hover:text-txt-primary min-h-[44px] min-w-[44px] flex items-center justify-center">

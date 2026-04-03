@@ -138,7 +138,8 @@ export default function AiDrawer() {
       <button
         id="ai-fab"
         onClick={() => setOpen(true)}
-        className="fixed bottom-4 sm:bottom-6 right-4 sm:right-6 z-50 w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-crimson hover:bg-crimson-hover text-white shadow-lg shadow-crimson/30 hover:shadow-crimson/50 transition-all duration-300 hover:scale-110 flex items-center justify-center animate-pulseGlow"
+        className="fixed right-4 sm:right-6 z-50 w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-crimson hover:bg-crimson-hover text-white shadow-lg shadow-crimson/30 hover:shadow-crimson/50 transition-all duration-300 hover:scale-110 flex items-center justify-center animate-pulseGlow"
+        style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}
         aria-label="AI Recommendations"
       >
         <span className="text-lg sm:text-xl font-bold">✦</span>

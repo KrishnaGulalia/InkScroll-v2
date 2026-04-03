@@ -1,8 +1,8 @@
 const ANILIST_URL = 'https://graphql.anilist.co';
 
 const MEDIA_LIST_QUERY = `
-query ($page: Int, $sort: [MediaSort], $genre: String, $country: CountryCode, $search: String, $status: MediaStatus) {
-  Page(page: $page, perPage: 30) {
+query ($page: Int, $perPage: Int, $sort: [MediaSort], $genre: String, $country: CountryCode, $search: String, $status: MediaStatus, $averageScore_greater: Int, $popularity_lesser: Int) {
+  Page(page: $page, perPage: $perPage) {
     pageInfo { hasNextPage currentPage }
     media(
       type: MANGA
@@ -11,6 +11,8 @@ query ($page: Int, $sort: [MediaSort], $genre: String, $country: CountryCode, $s
       countryOfOrigin: $country
       search: $search
       status: $status
+      averageScore_greater: $averageScore_greater
+      popularity_lesser: $popularity_lesser
       isAdult: false
     ) {
       id

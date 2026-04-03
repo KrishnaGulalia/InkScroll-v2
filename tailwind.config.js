@@ -50,9 +50,9 @@ export default {
         },
       },
       fontFamily: {
-        heading: ['Cinzel', 'serif'],
-        body: ['Sora', 'sans-serif'],
-        display: ['"Bebas Neue"', 'sans-serif'],
+        display: ['"Playfair Display"', 'serif'],
+        body: ['"DM Sans"', 'sans-serif'],
+        logo: ['Cinzel', 'serif'],
       },
       animation: {
         fadeIn: 'fadeIn 0.4s ease-out',

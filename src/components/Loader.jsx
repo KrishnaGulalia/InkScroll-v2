@@ -50,7 +50,7 @@ export function HomeSkeleton() {
 
 export function DetailSkeleton() {
   return (
-    <div className="pt-14 sm:pt-[60px]">
+    <div>
       {/* Banner skeleton */}
       <div className="h-[220px] sm:h-[320px] md:h-[380px] shimmer-bg" />
       <div className="max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 -mt-20 sm:-mt-32">

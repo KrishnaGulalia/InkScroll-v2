@@ -1,86 +1,92 @@
 const MANHWA_SOURCES = [
   {
+    name: "Webtoon",
+    url: (title) => `https://www.webtoons.com/en/search?keyword=${encodeURIComponent(title)}`,
+    type: "official",
+    icon: "🌐",
+  },
+  {
+    name: "MangaDex",
+    url: (title) => `https://mangadex.org/search?q=${encodeURIComponent(title)}`,
+    type: "aggregator",
+    icon: "📚",
+  },
+  {
+    name: "MangaKakalot",
+    url: (title) => `https://mangakakalot.com/search/story/${encodeURIComponent(title.toLowerCase().replace(/\s+/g, '_'))}`,
+    type: "aggregator",
+    icon: "📖",
+  },
+  {
     name: "Asura Scans",
-    buildUrl: (t) => `https://asuracomic.net/?s=${encodeURIComponent(t)}`,
+    url: (title) => `https://asuracomic.net/?s=${encodeURIComponent(title)}`,
     type: "scanlation",
     icon: "⚔️",
   },
   {
     name: "Reaper Scans",
-    buildUrl: (t) => `https://reaperscans.com/?s=${encodeURIComponent(t)}`,
+    url: (title) => `https://reaperscans.com/?s=${encodeURIComponent(title)}`,
     type: "scanlation",
     icon: "💀",
   },
   {
-    name: "Flame Scans",
-    buildUrl: (t) => `https://flamecomics.xyz/?s=${encodeURIComponent(t)}`,
+    name: "Flame Comics",
+    url: (title) => `https://flamecomics.xyz/?s=${encodeURIComponent(title)}`,
     type: "scanlation",
     icon: "🔥",
-  },
-  {
-    name: "MangaDex",
-    buildUrl: (t) => `https://mangadex.org/search?q=${encodeURIComponent(t)}`,
-    type: "aggregator",
-    icon: "📚",
-  },
-  {
-    name: "Webtoon",
-    buildUrl: (t) => `https://www.webtoons.com/en/search?keyword=${encodeURIComponent(t)}`,
-    type: "official",
-    icon: "🌐",
-  },
-  {
-    name: "Tapas",
-    buildUrl: (t) => `https://tapas.io/search?q=${encodeURIComponent(t)}`,
-    type: "official",
-    icon: "📱",
   },
 ];
 
 const MANGA_SOURCES = [
   {
+    name: "Manga Plus",
+    url: (title) => `https://mangaplus.shueisha.co.jp/search_result?keyword=${encodeURIComponent(title)}`,
+    type: "official",
+    icon: "🔵",
+  },
+  {
     name: "MangaDex",
-    buildUrl: (t) => `https://mangadex.org/search?q=${encodeURIComponent(t)}`,
+    url: (title) => `https://mangadex.org/search?q=${encodeURIComponent(title)}`,
     type: "aggregator",
     icon: "📚",
   },
   {
     name: "MangaSee",
-    buildUrl: (t) => `https://mangasee123.com/search/?name=${encodeURIComponent(t)}`,
+    url: (title) => `https://mangasee123.com/search/?name=${encodeURIComponent(title)}`,
     type: "aggregator",
     icon: "👁️",
   },
   {
-    name: "TCB Scans",
-    buildUrl: (t) => `https://tcbscans.me/?s=${encodeURIComponent(t)}`,
-    type: "scanlation",
-    icon: "⚡",
+    name: "MangaKakalot",
+    url: (title) => `https://mangakakalot.com/search/story/${encodeURIComponent(title.toLowerCase().replace(/\s+/g, '_'))}`,
+    type: "aggregator",
+    icon: "📖",
   },
   {
-    name: "MangaPlus",
-    buildUrl: (t) => `https://mangaplus.shueisha.co.jp/search_result?keyword=${encodeURIComponent(t)}`,
-    type: "official",
-    icon: "🔵",
+    name: "TCB Scans",
+    url: (title) => `https://tcbscans.me/?s=${encodeURIComponent(title)}`,
+    type: "scanlation",
+    icon: "⚡",
   },
 ];
 
 const MANHUA_SOURCES = [
   {
     name: "MangaDex",
-    buildUrl: (t) => `https://mangadex.org/search?q=${encodeURIComponent(t)}`,
+    url: (title) => `https://mangadex.org/search?q=${encodeURIComponent(title)}`,
     type: "aggregator",
     icon: "📚",
   },
   {
     name: "Manhua Plus",
-    buildUrl: (t) => `https://manhuaplus.org/?s=${encodeURIComponent(t)}`,
+    url: (title) => `https://manhuaplus.org/?s=${encodeURIComponent(title)}`,
     type: "scanlation",
     icon: "🐉",
   },
   {
-    name: "WebComics",
-    buildUrl: (t) => `https://www.webcomicsapp.com/search?word=${encodeURIComponent(t)}`,
-    type: "official",
+    name: "ManhuaScan",
+    url: (title) => `https://manhuascan.io/?s=${encodeURIComponent(title)}`,
+    type: "aggregator",
     icon: "📖",
   },
 ];
@@ -94,15 +100,16 @@ const SOURCE_MAP = {
 
 /**
  * Get reading sources for a title based on country of origin.
+ * All source URLs are now functions that take the title and return a search URL.
  * Also merges in AniList externalLinks if provided.
  */
 export function getReadingSources(title, countryOfOrigin, externalLinks = []) {
   const countrySources = SOURCE_MAP[countryOfOrigin] || MANGA_SOURCES;
 
-  // Build sources with actual URLs
+  // Build sources — url is a function, call it with the title
   const sources = countrySources.map((src) => ({
     name: src.name,
-    url: src.buildUrl(title),
+    url: src.url(title),
     type: src.type,
     icon: src.icon,
   }));
