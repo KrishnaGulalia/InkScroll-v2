@@ -15,41 +15,72 @@ export function AuthProvider({ children }) {
         .from('profiles')
         .select('*')
         .eq('id', userId)
-        .single();
-      
-      if (error) throw error;
-      setProfile(data);
-    } catch (error) {
-      console.error('Error fetching profile:', error);
-      // Fallback if trigger hasn't fired yet
-      setProfile({ id: userId, display_name: 'Unknown', username: 'unknown' });
+        .single()
+
+      if (error) {
+        // If profile doesn't exist yet, create it
+        if (error.code === 'PGRST116') {
+          const { data: newProfile } = await supabase
+            .from('profiles')
+            .insert({
+              id: userId,
+              username: user?.email?.split('@')[0] || 'user',
+              display_name: user?.email?.split('@')[0] || 'user',
+              avatar_url: user?.user_metadata?.avatar_url || null
+            })
+            .select()
+            .single()
+          setProfile(newProfile)
+        }
+        return
+      }
+      setProfile(data)
+    } catch (err) {
+      console.error('Profile fetch error:', err)
     }
-  };
+  }
 
   useEffect(() => {
-    // Check active sessions and sets the user
+    // Get initial session
     supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
+      setUser(session?.user ?? null)
       if (session?.user) {
-        fetchProfile(session.user.id);
-      } else {
-        setLoading(false);
+        fetchProfile(session.user.id)
       }
-    });
+      setLoading(false)
+    })
 
-    // Listen for changes on auth state (in, out, etc.)
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (_event, session) => {
-      setUser(session?.user ?? null);
-      if (session?.user) {
-        await fetchProfile(session.user.id);
-      } else {
-        setProfile(null);
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setUser(session?.user ?? null)
+        if (session?.user) {
+          await fetchProfile(session.user.id)
+        } else {
+          setProfile(null)
+        }
+        setLoading(false)
       }
-      setLoading(false);
-    });
+    )
 
-    return () => subscription.unsubscribe();
-  }, []);
+    return () => subscription.unsubscribe()
+  }, [])
+
+  useEffect(() => {
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'visible') {
+        supabase.auth.getSession().then(({ data: { session } }) => {
+          setUser(session?.user ?? null)
+          if (session?.user) {
+            fetchProfile(session.user.id)
+          }
+        })
+      }
+    }
+
+    document.addEventListener('visibilitychange', handleVisibilityChange)
+    return () => document.removeEventListener('visibilitychange', handleVisibilityChange)
+  }, [])
 
   // Update profile handler (wrapper to sync local state)
   const updateProfile = async (updates) => {
