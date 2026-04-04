@@ -10,11 +10,11 @@ export const CATEGORIES = [
 
 export default function CategoryPills({ activeCategory, onCategoryChange }) {
   return (
-    <div className="flex gap-2 overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-1 -mx-1 px-1">
+    <div className="flex gap-2 overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-1 -mx-3 sm:mx-0 px-3 sm:px-0">
       {/* "For You" default */}
       <button
         onClick={() => onCategoryChange(null)}
-        className={`shrink-0 snap-start flex items-center gap-1.5 px-4 h-9 rounded-full text-[13px] font-medium transition-all duration-200 font-body border ${
+        className={`shrink-0 snap-start flex items-center gap-1.5 px-4 min-h-[36px] h-9 rounded-full text-[13px] font-medium transition-all duration-200 font-body border ml-1 sm:ml-0 ${
           !activeCategory
             ? 'bg-crimson border-crimson text-white shadow-md shadow-crimson/20'
             : 'bg-card border-line text-txt-muted hover:bg-elevated hover:text-txt-primary hover:border-line-hover'
@@ -30,7 +30,7 @@ export default function CategoryPills({ activeCategory, onCategoryChange }) {
           <button
             key={cat.label}
             onClick={() => onCategoryChange(cat)}
-            className={`shrink-0 snap-start flex items-center gap-1.5 px-4 h-9 rounded-full text-[13px] font-medium transition-all duration-200 font-body border ${
+            className={`shrink-0 snap-start flex items-center gap-1.5 px-4 min-h-[36px] h-9 rounded-full text-[13px] font-medium transition-all duration-200 font-body border last:mr-3 sm:last:mr-0 ${
               activeCategory?.label === cat.label
                 ? 'bg-crimson border-crimson text-white shadow-md shadow-crimson/20'
                 : 'bg-card border-line text-txt-muted hover:bg-elevated hover:text-txt-primary hover:border-line-hover'

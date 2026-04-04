@@ -7,7 +7,7 @@ export default function MediaCard({ media, index = 0, size = 'default' }) {
   const title = media.title?.english || media.title?.romaji || '';
 
   const sizeClasses = {
-    large: 'w-[150px] sm:w-[180px] lg:w-[200px]',
+    large: 'w-[130px] sm:w-[160px] lg:w-[200px]',
     default: 'w-full',
   };
 
@@ -57,7 +57,7 @@ export default function MediaCard({ media, index = 0, size = 'default' }) {
       </div>
 
       {/* Genre tags below card */}
-      <div className="flex flex-wrap gap-1 mt-1.5 sm:mt-2 px-0.5">
+      <div className="hidden sm:flex flex-wrap gap-1 mt-1.5 sm:mt-2 px-0.5">
         {media.genres?.slice(0, 2).map((g) => (
           <span key={g} className="text-[9px] sm:text-[10px] px-1.5 sm:px-2 py-0.5 rounded-full bg-elevated text-txt-muted font-body">
             {g}

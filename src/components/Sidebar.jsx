@@ -54,10 +54,10 @@ export default function Sidebar({ isOpen, onClose }) {
       <Link
         to={item.to}
         onClick={onClose}
-        className={`flex items-center px-5 py-2.5 font-body text-[14px] transition-all border-l-2 ${
+        className={`flex items-center px-5 py-3 min-h-[48px] font-body text-[14px] sm:text-[15px] transition-all border-l-[3px] ${
           active
-            ? 'text-crimson border-crimson bg-crimson/5'
-            : 'text-txt-secondary border-transparent hover:text-txt-primary hover:border-crimson'
+            ? 'text-crimson border-crimson bg-crimson/5 font-bold'
+            : 'text-txt-secondary border-transparent hover:text-txt-primary hover:border-crimson hover:bg-white/5 font-medium'
         }`}
       >
         <Icon className="w-[18px] h-[18px] mr-3" />
@@ -90,7 +90,7 @@ export default function Sidebar({ isOpen, onClose }) {
           </Link>
           <button 
             onClick={onClose}
-            className="p-2 text-txt-secondary hover:text-txt-primary hover:bg-white/5 rounded-lg transition-colors"
+            className="p-2 text-txt-secondary hover:text-txt-primary hover:bg-white/5 rounded-lg transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
           >
             <XMarkIcon className="w-5 h-5" />
           </button>
@@ -101,7 +101,7 @@ export default function Sidebar({ isOpen, onClose }) {
           
           {/* DISCOVER */}
           <div className="mb-6">
-            <h3 className="px-5 pb-2 text-[11px] font-body tracking-[0.1em] uppercase text-txt-muted font-bold">Discover</h3>
+            <h3 className="px-6 pb-2 text-[11px] font-body tracking-[0.1em] uppercase text-txt-muted font-bold">Discover</h3>
             <div className="flex flex-col">
               {DISCOVER_LINKS.map(link => <NavItem key={link.label} item={link} />)}
             </div>
@@ -109,7 +109,7 @@ export default function Sidebar({ isOpen, onClose }) {
 
           {/* BROWSE BY TYPE */}
           <div className="mb-6">
-            <h3 className="px-5 pb-2 text-[11px] font-body tracking-[0.1em] uppercase text-txt-muted font-bold">Browse By Type</h3>
+            <h3 className="px-6 pb-2 text-[11px] font-body tracking-[0.1em] uppercase text-txt-muted font-bold">Browse By Type</h3>
             <div className="flex flex-col">
               {BROWSE_LINKS.map(link => <NavItem key={link.label} item={link} />)}
             </div>
@@ -119,10 +119,10 @@ export default function Sidebar({ isOpen, onClose }) {
           <div className="mb-6">
             <button 
               onClick={() => setGenresOpen(!genresOpen)}
-              className="w-full flex items-center justify-between px-5 pb-2 cursor-pointer group"
+              className="w-full flex items-center justify-between px-6 py-2 min-h-[44px] cursor-pointer group focus:outline-none"
             >
               <h3 className="text-[11px] font-body tracking-[0.1em] uppercase text-txt-muted font-bold group-hover:text-txt-secondary transition-colors">Genres</h3>
-              <ChevronDownIcon className={`w-3.5 h-3.5 text-txt-muted transition-transform duration-300 ${genresOpen ? 'rotate-180' : ''}`} />
+              <ChevronDownIcon className={`w-4 h-4 text-txt-muted transition-transform duration-300 ${genresOpen ? 'rotate-180' : ''}`} />
             </button>
             
             <div className={`flex justify-start flex-wrap gap-2 px-5 pt-2 overflow-hidden transition-all duration-300 ${genresOpen ? 'max-h-[500px] opacity-100' : 'max-h-0 opacity-0'}`}>
@@ -131,7 +131,7 @@ export default function Sidebar({ isOpen, onClose }) {
                   key={genre}
                   to={`/?genre=${encodeURIComponent(genre)}`}
                   onClick={onClose}
-                  className="px-3 py-1.5 rounded-lg bg-card border border-line text-xs font-medium text-txt-secondary hover:text-txt-primary hover:border-line-hover transition-colors font-body"
+                  className="px-4 py-2 flex items-center justify-center min-h-[40px] rounded-lg bg-card border border-line text-[13px] font-medium text-txt-secondary hover:text-txt-primary hover:border-line-hover transition-colors font-body"
                 >
                   {genre}
                 </Link>

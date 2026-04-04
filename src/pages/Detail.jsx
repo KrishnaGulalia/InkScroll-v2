@@ -42,7 +42,7 @@ export default function Detail() {
   return (
     <div className="min-h-screen animate-fadeIn overflow-x-hidden">
       {/* Banner */}
-      <div className="relative h-[220px] sm:h-[300px] md:h-[380px]">
+      <div className="relative h-[200px] sm:h-[300px] md:h-[380px]">
         {media.bannerImage ? (
           <img src={media.bannerImage} alt="" className="w-full h-full object-cover" />
         ) : (
@@ -66,21 +66,21 @@ export default function Detail() {
       </div>
 
       {/* Main content */}
-      <div className="relative max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 -mt-28 sm:-mt-36 md:-mt-44 z-10">
+      <div className="relative max-w-[1400px] mx-auto px-3 sm:px-6 lg:px-8 mt-4 sm:-mt-36 md:-mt-44 z-10">
         {/* Mobile: centered cover + title below. Desktop: side by side */}
         <div className="flex flex-col items-center sm:items-start md:flex-row gap-4 sm:gap-6 md:gap-8">
           {/* Cover */}
-          <div className="shrink-0">
+          <div className="shrink-0 -mt-20 sm:mt-0 relative z-20">
             <img
               src={media.coverImage?.extraLarge}
               alt={title}
-              className="w-[140px] sm:w-[180px] md:w-[220px] rounded-xl sm:rounded-2xl shadow-2xl shadow-black/60 border border-white/10"
+              className="w-[130px] sm:w-[180px] md:w-[220px] rounded-xl sm:rounded-2xl shadow-2xl shadow-black/80 border border-white/10 mx-auto sm:mx-0"
             />
           </div>
 
           {/* Info */}
-          <div className="flex-1 text-center sm:text-left pt-2 sm:pt-4 md:pt-6 w-full">
-            <h1 className="font-display text-xl sm:text-2xl md:text-3xl lg:text-4xl font-bold text-txt-primary leading-tight tracking-wide italic">
+          <div className="flex-1 text-center sm:text-left pt-0 sm:pt-4 md:pt-6 w-full">
+            <h1 className="font-display text-[22px] sm:text-2xl md:text-3xl lg:text-4xl font-bold text-txt-primary leading-tight tracking-wide italic">
               {title}
             </h1>
             {media.title?.native && (
@@ -105,7 +105,7 @@ export default function Detail() {
             </div>
 
             {/* Stats row */}
-            <div className="flex flex-wrap items-center justify-center sm:justify-start gap-1.5 sm:gap-2 mt-2 sm:mt-3">
+            <div className="grid grid-cols-2 sm:flex items-center justify-center sm:justify-start gap-1.5 sm:gap-2 mt-3 sm:mt-3">
               <StatPill label={media.status?.replace(/_/g, ' ')} />
               {media.chapters && <StatPill label={`${media.chapters} ch`} />}
               {media.startDate?.year && <StatPill label={media.startDate.year} />}
@@ -115,16 +115,16 @@ export default function Detail() {
             </div>
 
             {/* Genres */}
-            <div className="flex flex-wrap justify-center sm:justify-start gap-1.5 sm:gap-2 mt-3 sm:mt-4">
+            <div className="flex overflow-x-auto hide-scrollbar sm:flex-wrap justify-start sm:justify-start gap-1.5 sm:gap-2 mt-4 sm:mt-4 pb-1 sm:pb-0 px-2 sm:px-0">
               {media.genres?.map((g) => (
-                <span key={g} className="px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-white/5 border border-line text-[11px] sm:text-xs text-txt-secondary">
+                <span key={g} className="shrink-0 px-3 sm:px-3 py-1 sm:py-1 rounded-full bg-white/5 border border-line text-[12px] sm:text-xs text-txt-secondary whitespace-nowrap">
                   {g}
                 </span>
               ))}
             </div>
 
             {/* Reading List Actions */}
-            <div className="mt-5 sm:mt-6 flex justify-center sm:justify-start relative">
+            <div className="mt-5 sm:mt-6 flex justify-center sm:justify-start w-full relative px-2 sm:px-0">
               <AddToListButton media={media} />
             </div>
           </div>
@@ -137,7 +137,7 @@ export default function Detail() {
               <button
                 key={tab.key}
                 onClick={() => setActiveTab(tab.key)}
-                className={`relative px-3.5 sm:px-5 py-2.5 sm:py-3 text-xs sm:text-sm font-medium transition-all duration-200 whitespace-nowrap min-h-[44px] ${
+                className={`relative px-4 sm:px-5 py-3 sm:py-3 text-[13px] sm:text-sm font-medium transition-all duration-200 whitespace-nowrap min-h-[44px] ${
                   activeTab === tab.key
                     ? 'text-crimson tab-active'
                     : 'text-txt-muted hover:text-txt-secondary'
@@ -251,7 +251,7 @@ export default function Detail() {
                       const Wrapper = r.type === 'MANGA' ? Link : 'div';
                       const wrapperProps = r.type === 'MANGA' ? { to: `/manga/${r.id}` } : {};
                       return (
-                        <Wrapper key={r.id} {...wrapperProps} className="group shrink-0 w-[120px]">
+                        <Wrapper key={r.id} {...wrapperProps} className="group shrink-0 w-[110px]">
                           <div className="aspect-[2/3] overflow-hidden rounded-lg bg-card ring-1 ring-white/5 group-hover:ring-crimson/30 transition-all">
                             <img
                               src={r.coverImage?.medium}

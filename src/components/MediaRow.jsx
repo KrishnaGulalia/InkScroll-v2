@@ -30,7 +30,7 @@ export default function MediaRow({ title, media = [] }) {
     <section className="relative">
       {/* Section header */}
       <div className="flex items-center justify-between mb-4 sm:mb-6">
-        <h2 className="font-display text-[22px] font-bold text-txt-primary border-l-[3px] border-crimson pl-3 leading-tight tracking-wide">
+        <h2 className="font-display text-[18px] sm:text-[22px] font-bold text-txt-primary border-l-[3px] border-crimson pl-3 leading-tight tracking-wide">
           {title}
         </h2>
         <button className="text-[13px] text-crimson hover:underline underline-offset-4 transition-all font-body font-medium flex items-center gap-1 group min-h-[44px] px-2">
@@ -60,7 +60,7 @@ export default function MediaRow({ title, media = [] }) {
         {/* Cards row — smooth touch scroll, show partial next card */}
         <div
           ref={scrollRef}
-          className="flex gap-3 sm:gap-4 overflow-x-auto hide-scrollbar snap-x snap-mandatory pb-2 -mx-1 px-1"
+          className="flex gap-3 sm:gap-4 overflow-x-auto hide-scrollbar snap-x snap-mandatory pt-1 pb-2 -mx-3 sm:mx-0 px-3 sm:px-0"
           style={{ WebkitOverflowScrolling: 'touch' }}
         >
           {media.map((item, i) => (

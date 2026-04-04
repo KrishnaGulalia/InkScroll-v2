@@ -70,7 +70,7 @@ export default function Settings() {
               return (
                 <button 
                   key={t.id} onClick={() => setActiveTab(t.id)}
-                  className={`flex items-center gap-2 px-4 py-2.5 rounded-full text-[13px] font-bold tracking-widest uppercase whitespace-nowrap transition-colors ${
+                  className={`flex items-center gap-2 px-5 py-3 min-h-[44px] rounded-full text-[13px] font-bold tracking-widest uppercase whitespace-nowrap transition-colors ${
                     activeTab === t.id ? 'bg-crimson/10 text-crimson border-crimson' : 'text-txt-muted hover:text-white bg-card border-transparent'
                   } border`}
                 >
@@ -137,7 +137,7 @@ export default function Settings() {
 
 function SectionCard({ title, children }) {
   return (
-    <div className="bg-[#111420] border border-white/5 rounded-2xl p-6 sm:p-8 mb-6 shadow-xl shadow-black/40">
+    <div className="bg-[#111420] border border-white/5 rounded-2xl p-4 sm:p-8 mb-6 shadow-xl shadow-black/40">
       {title && (
         <h2 className="text-[11px] font-bold tracking-[0.1em] text-txt-muted uppercase mb-6 border-b border-line pb-4">
           {title}
@@ -162,22 +162,25 @@ function InputField({ label, ...props }) {
 
 function CustomToggle({ checked, onChange, label, desc }) {
   return (
-    <div className="flex items-center justify-between py-3">
+    <button 
+      type="button"
+      onClick={() => onChange(!checked)}
+      className="w-full flex items-center justify-between py-3 min-h-[48px] text-left focus:outline-none"
+    >
       <div className="pr-4">
         <div className="text-[14px] font-bold text-white">{label}</div>
         {desc && <div className="text-[12px] font-medium text-txt-secondary mt-0.5">{desc}</div>}
       </div>
-      <button 
-        onClick={() => onChange(!checked)}
-        className={`w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 cursor-pointer transition-colors duration-300 shrink-0 ${
+      <div 
+        className={`w-12 h-6 flex items-center bg-gray-300 rounded-full p-1 transition-colors duration-300 shrink-0 ${
           checked ? 'bg-crimson' : 'bg-[#1a1f33] border border-line'
         }`}
       >
         <div className={`bg-white w-4 h-4 rounded-full shadow-md transform transition-transform duration-300 ${
           checked ? 'translate-x-6' : 'translate-x-0'
         }`} />
-      </button>
-    </div>
+      </div>
+    </button>
   );
 }
 

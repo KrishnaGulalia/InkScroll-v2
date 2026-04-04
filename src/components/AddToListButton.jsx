@@ -51,10 +51,10 @@ export default function AddToListButton({ media }) {
   };
 
   return (
-    <div className="relative z-50">
+    <div className="relative z-50 w-full sm:w-auto">
       <button 
         onClick={handleClick}
-        className={`px-5 py-2.5 rounded-lg font-bold text-sm sm:text-base border transition-all flex items-center justify-center gap-2 min-w-[160px] min-h-[44px] ${
+        className={`w-full sm:w-auto px-5 py-3 sm:py-2.5 rounded-lg font-bold text-sm sm:text-base border transition-all flex items-center justify-center gap-2 min-h-[48px] sm:min-h-[44px] ${
           status 
             ? 'bg-card border border-line hover:border-line-hover text-white shadow-sm'
             : 'bg-transparent border border-white/20 hover:border-white/40 text-white/80 hover:text-white hover:bg-white/5'
@@ -93,13 +93,13 @@ export default function AddToListButton({ media }) {
       {/* Status Dropdown */}
       {dropdownOpen && (
         <>
-          <div className="fixed inset-0 z-[100]" onClick={() => setDropdownOpen(false)} />
-          <div className="absolute top-full left-0 mt-2 w-[180px] bg-[#111420] border border-white/10 rounded-xl shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] z-[110] overflow-hidden animate-fadeIn py-1">
+          <div className="fixed inset-0 z-[100] bg-black/60 backdrop-blur-sm sm:bg-transparent sm:backdrop-blur-none" onClick={() => setDropdownOpen(false)} />
+          <div className="fixed sm:absolute bottom-0 sm:bottom-auto sm:top-full left-0 right-0 sm:right-auto mt-0 sm:mt-2 w-full sm:w-[180px] bg-[#111420] border-t sm:border border-white/10 rounded-t-2xl sm:rounded-xl shadow-[0_-10px_40px_-5px_rgba(0,0,0,0.8)] sm:shadow-[0_10px_40px_-10px_rgba(0,0,0,0.8)] z-[110] overflow-hidden animate-slideUp sm:animate-fadeIn py-2 sm:py-1 pb-[env(safe-area-inset-bottom,16px)] sm:pb-1">
             {STATUS_OPTIONS.map(opt => (
               <button 
                 key={opt.value}
                 onClick={() => handleSelectStatus(opt.value)}
-                className={`w-full text-left px-4 py-2.5 text-sm transition-colors ${
+                className={`w-full text-left px-6 sm:px-4 py-4 sm:py-2.5 text-base sm:text-sm transition-colors min-h-[48px] sm:min-h-0 ${
                   status === opt.value ? 'bg-crimson/10 text-crimson font-medium' : 'text-txt-primary hover:bg-white/5'
                 }`}
               >
@@ -109,10 +109,10 @@ export default function AddToListButton({ media }) {
             
             {status && (
               <>
-                <div className="h-px bg-line my-1" />
+                <div className="h-px bg-line my-1 mx-4 sm:mx-0" />
                 <button 
                   onClick={async () => { await removeFromList(media.id); setDropdownOpen(false); }}
-                  className="w-full text-left px-4 py-2.5 text-sm text-red-500 hover:bg-red-500/10 flex items-center justify-between transition-colors"
+                  className="w-full text-left px-6 sm:px-4 py-4 sm:py-2.5 text-base sm:text-sm text-red-500 hover:bg-red-500/10 flex items-center justify-between transition-colors min-h-[48px] sm:min-h-0"
                 >
                   Remove
                   <TrashIcon className="w-4 h-4" />

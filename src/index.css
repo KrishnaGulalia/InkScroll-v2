@@ -6,10 +6,13 @@
   html {
     scroll-behavior: smooth;
     -webkit-text-size-adjust: 100%;
+    overflow-x: hidden;
+    max-width: 100vw;
   }
   body {
     @apply bg-primary text-txt-primary font-body antialiased;
     overflow-x: hidden;
+    max-width: 100vw;
   }
   /* Safe area support for notched devices */
   body {
@@ -105,4 +108,11 @@ img {
 }
 .snap-start {
   scroll-snap-align: start;
+}
+
+/* Touch targets minimum 44px height everywhere on mobile mostly */
+@media (max-width: 768px) {
+  button, input, select {
+    min-height: 44px;
+  }
 }

@@ -35,7 +35,7 @@ export default function Hero({ items = [] }) {
   const title = media.title?.english || media.title?.romaji || '';
 
   return (
-    <section className="relative h-[70vh] min-h-[420px] max-h-[600px] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] sm:min-h-[420px] sm:max-h-[700px] -mt-14 sm:-mt-[60px]">
+    <section className="relative h-[320px] sm:h-[55vh] md:h-[60vh] lg:h-[65vh] sm:min-h-[420px] sm:max-h-[700px] -mt-14 sm:-mt-[60px]">
       {/* Background container with overflow hidden to prevent scale-105 leaking */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         {/* Background images */}
@@ -80,18 +80,18 @@ export default function Hero({ items = [] }) {
           className={`w-full sm:max-w-2xl transition-all duration-500 ${isTransitioning ? 'opacity-0 translate-x-[-10px]' : 'opacity-100 translate-x-0'}`}
         >
           {/* Badge */}
-          <span className="inline-flex items-center gap-1.5 px-3 sm:px-4 py-1 sm:py-1.5 rounded-full bg-crimson/20 border border-crimson/30 text-crimson text-[11px] sm:text-xs font-semibold uppercase tracking-wider mb-3 sm:mb-5 font-body">
+          <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-4 py-0.5 sm:py-1.5 rounded-full bg-crimson/20 border border-crimson/30 text-crimson text-[9px] sm:text-xs font-semibold uppercase tracking-wider mb-2 sm:mb-5 font-body">
             <span className="w-1.5 h-1.5 rounded-full bg-crimson animate-pulse" />
             Trending Now
           </span>
 
           {/* Title — uses Playfair Display */}
-          <h2 className="font-display text-[28px] sm:text-4xl md:text-5xl lg:text-[56px] font-bold text-white leading-[1.1] tracking-wide italic">
+          <h2 className="font-display text-[clamp(28px,5vw,56px)] font-bold text-white leading-[1.1] tracking-wide italic line-clamp-2">
             {title}
           </h2>
 
           {/* Score + Genres */}
-          <div className="flex flex-wrap items-center gap-2 sm:gap-3 mt-3 sm:mt-5">
+          <div className="flex items-center gap-2 sm:gap-3 mt-3 sm:mt-5 overflow-x-auto hide-scrollbar whitespace-nowrap snap-x sm:flex-wrap pb-1 sm:pb-0">
             {media.averageScore && (
               <span className="flex items-center gap-1 sm:gap-1.5 bg-gold/15 px-2.5 sm:px-3 py-1 sm:py-1.5 rounded-lg text-gold font-bold text-xs sm:text-sm border border-gold/20 font-body">
                 ★ {(media.averageScore / 10).toFixed(1)}
@@ -105,10 +105,10 @@ export default function Hero({ items = [] }) {
           </div>
 
           {/* Buttons */}
-          <div className="flex flex-col sm:flex-row items-stretch sm:items-start gap-2 sm:gap-3 mt-5 sm:mt-7">
+          <div className="flex flex-col sm:flex-row w-full sm:w-auto items-stretch sm:items-start gap-2 mt-5 sm:mt-7">
             <Link
               to={`/manga/${media.id}`}
-              className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 bg-crimson hover:bg-crimson-hover text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-crimson/30 active:scale-[0.98] text-sm sm:text-base min-h-[44px] font-body"
+              className="inline-flex items-center justify-center gap-2 px-6 sm:px-7 py-3 bg-crimson hover:bg-crimson-hover text-white font-semibold rounded-xl transition-all duration-300 hover:shadow-lg hover:shadow-crimson/30 active:scale-[0.98] text-sm sm:text-base min-h-[44px] sm:min-h-[48px] w-full sm:w-auto font-body"
             >
               View Details
               <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -124,18 +124,22 @@ export default function Hero({ items = [] }) {
 
       {/* Dot indicators */}
       {items.length > 1 && (
-        <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-2">
+        <div className="absolute bottom-2 sm:bottom-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-1 sm:gap-2">
           {items.map((_, i) => (
             <button
               key={i}
               onClick={() => goTo(i)}
-              className={`transition-all duration-300 rounded-full min-h-[20px] min-w-[20px] flex items-center justify-center ${
-                i === activeIndex
-                  ? 'w-8 h-2 bg-crimson'
-                  : 'w-2 h-2 bg-white/30 hover:bg-white/50'
-              }`}
+              className="p-2 sm:p-2 transition-all duration-300 min-h-[28px] min-w-[28px] flex items-center justify-center"
               aria-label={`Go to slide ${i + 1}`}
-            />
+            >
+              <div 
+                className={`rounded-full transition-all duration-300 ${
+                  i === activeIndex
+                    ? 'w-6 sm:w-8 h-1.5 sm:h-2 bg-crimson'
+                    : 'w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white/30 group-hover:bg-white/50'
+                }`}
+              />
+            </button>
           ))}
         </div>
       )}

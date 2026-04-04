@@ -103,8 +103,8 @@ export default function Navbar({ searchQuery, onSearchChange, onMenuClick }) {
               onClick={() => { onSearchChange(''); setMobileSearchOpen(false); }}
               className="flex items-center gap-2 shrink-0 group min-h-[44px] pl-1"
             >
-              <img src="/logo.png" alt="InkScroll" className="h-8 sm:h-9 w-auto" />
-              <span className="hidden sm:inline font-logo text-lg sm:text-xl font-bold tracking-[0.15em] uppercase">
+              <img src="/logo.png" alt="InkScroll" className="h-[36px] w-auto" />
+              <span className="hidden md:inline font-logo text-lg sm:text-xl font-bold tracking-[0.15em] uppercase">
                 <span className="text-white group-hover:text-white/90 transition-colors">Ink</span>
                 <span className="text-crimson group-hover:text-crimson-light transition-colors">Scroll</span>
               </span>
@@ -222,11 +222,18 @@ export default function Navbar({ searchQuery, onSearchChange, onMenuClick }) {
         </div>
       </nav>
 
-      {/* Mobile full-width search overlay */}
+      {/* Mobile full-screen search overlay */}
       {mobileSearchOpen && (
-        <div className="fixed top-14 left-0 right-0 z-50 sm:hidden bg-primary/95 backdrop-blur-xl border-b border-line px-3 py-3 animate-fadeIn">
-          <div className="relative">
-            <svg className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-txt-muted pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <div className="fixed inset-0 z-[100] sm:hidden bg-primary/98 backdrop-blur-3xl animate-fadeIn flex flex-col p-4 pb-0 pt-[env(safe-area-inset-top,16px)]">
+          <div className="flex justify-end mb-4 shrink-0">
+            <button onClick={() => setMobileSearchOpen(false)} className="text-txt-muted hover:text-white min-h-[44px] min-w-[44px] flex items-center justify-center -mr-2">
+              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
+              </svg>
+            </button>
+          </div>
+          <div className="relative w-full max-w-md mx-auto">
+            <svg className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-txt-muted pointer-events-none" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
             </svg>
             <input
@@ -235,11 +242,11 @@ export default function Navbar({ searchQuery, onSearchChange, onMenuClick }) {
               placeholder="Search manga, manhwa, manhua..."
               value={localQuery}
               onChange={handleChange}
-              className="w-full pl-10 pr-10 py-3 bg-elevated border border-line rounded-full text-sm text-txt-primary placeholder-txt-muted focus:outline-none focus:border-crimson/40 transition-all font-body"
+              className="w-full pl-12 pr-12 py-4 bg-elevated/50 border border-line rounded-2xl text-base text-txt-primary placeholder-txt-muted focus:outline-none focus:border-crimson/50 focus:ring-1 focus:ring-crimson/30 transition-all font-body shadow-inner"
             />
             {localQuery && (
-              <button onClick={handleClear} className="absolute right-3 top-1/2 -translate-y-1/2 text-txt-muted hover:text-txt-primary min-h-[44px] min-w-[44px] flex items-center justify-center">
-                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <button onClick={handleClear} className="absolute right-2 top-1/2 -translate-y-1/2 text-txt-muted hover:text-txt-primary min-h-[44px] min-w-[44px] flex items-center justify-center">
+                <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
                 </svg>
               </button>

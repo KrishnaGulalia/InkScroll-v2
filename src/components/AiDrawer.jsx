@@ -138,7 +138,7 @@ export default function AiDrawer() {
       <button
         id="ai-fab"
         onClick={() => setOpen(true)}
-        className="fixed right-4 sm:right-6 z-50 w-12 sm:w-14 h-12 sm:h-14 rounded-full bg-crimson hover:bg-crimson-hover text-white shadow-lg shadow-crimson/30 hover:shadow-crimson/50 transition-all duration-300 hover:scale-110 flex items-center justify-center animate-pulseGlow"
+        className="fixed right-4 sm:right-6 z-50 w-[56px] h-[56px] rounded-full bg-crimson hover:bg-crimson-hover text-white shadow-lg shadow-crimson/30 hover:shadow-crimson/50 transition-all duration-300 hover:scale-110 flex items-center justify-center animate-pulseGlow"
         style={{ bottom: 'calc(1rem + env(safe-area-inset-bottom, 0px))' }}
         aria-label="AI Recommendations"
       >
@@ -154,7 +154,7 @@ export default function AiDrawer() {
       {/* Drawer */}
       <div
         ref={drawerRef}
-        className={`fixed bottom-0 left-0 right-0 z-[70] h-[70vh] sm:h-[480px] max-h-[85vh] bg-secondary border-t border-line rounded-t-2xl shadow-2xl shadow-black/60 transition-transform duration-300 ease-out flex flex-col ${open ? 'translate-y-0' : 'translate-y-full'}`}
+        className={`fixed bottom-0 left-0 right-0 z-[70] h-[70vh] sm:h-[480px] max-h-[85vh] bg-secondary border-t border-line rounded-t-[32px] sm:rounded-t-2xl shadow-2xl shadow-black/60 transition-transform duration-300 ease-out flex flex-col ${open ? 'translate-y-0' : 'translate-y-full'}`}
         style={{ paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}
       >
         {/* Drag handle */}
