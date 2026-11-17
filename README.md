@@ -1,3 +1,8 @@
+InkScroll is a manhwa discovery web app built JavaScript and the MangaDex API. Users can search, filter by genre, and sort titles — with favorites saved locally.
+
+🖋 InkScroll
+
+
 # React + Vite
 
 This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
